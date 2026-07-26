@@ -37,20 +37,3 @@ Every water log response includes a computed `status` (`optimal` / `warning` /
 thresholds (temperature, pH, turbidity) — see `services/water_quality.py`.
 These are sane defaults, not a substitute for site-specific guidance.
 
-## What changed from the original
-
-- Implemented `waterlog_routes.py`/`waterlog_services.py`, which were stubs
-  (`return` with nothing).
-- Fixed `user_routes.py` calling services with `id` (Python's builtin) instead
-  of the actual path parameter — this raised a `TypeError` on every
-  get/update/delete user call.
-- Fixed `tank_services.update_tank`, which had a dangling `setattr(tank, key, val)`
-  statement left over from commented-out code, using undefined `key`/`val`.
-- Fixed `waterlog_services.create_water_log` calling `db.refresh()` before
-  `db.commit()` and `db.commit(log_db)` with an invalid argument.
-- Added `owner_id` on tanks, unique/indexed email on users, and indexed
-  `tank_id` foreign keys.
-- Added feeding-log tracking, water-quality evaluation, and a tank summary
-  endpoint as new features.
-- Added `requirements.txt`, `config.py`, `.gitignore` (the `.db` file and
-  `__pycache__` were previously being committed), and this README.
