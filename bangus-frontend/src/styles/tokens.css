@@ -1,0 +1,37 @@
+:root {
+  /* Palette — a brackish milkfish pond: deep water, sun-bleached dikes, clay banks */
+  --ink: #16302c;          /* deep pond water at dusk — used for the sidebar & dark surfaces */
+  --ink-raised: #1e3f39;
+  --water: #1f6f78;        /* working teal — primary actions, links */
+  --water-deep: #0f4c52;
+  --water-tint: #7fc8c0;   /* pale surface shimmer — used sparingly for highlights */
+  --paper: #eef1e6;        /* sun-bleached pond-side paper, not cream, greener/cooler */
+  --paper-raised: #ffffff;
+  --paper-line: #d8ddcc;
+  --clay: #c97b4a;         /* dike clay / feeding accent */
+  --clay-deep: #a5602f;
+  --success: #4c8c6b;      /* moss green — optimal water */
+  --warning: #c99a3b;      /* mud gold — needs watching */
+  --danger: #b23a2e;       /* rust red — critical */
+  --ink-soft: #4d5f5a;
+
+  --font-display: "Spectral", Georgia, serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 18px;
+
+  --shadow-card: 0 1px 2px rgba(22, 48, 44, 0.06), 0 8px 24px -12px rgba(22, 48, 44, 0.18);
+  --shadow-pop: 0 20px 60px -20px rgba(15, 76, 82, 0.45);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+}
