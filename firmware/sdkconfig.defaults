@@ -1,0 +1,23 @@
+# ESP32-S3 Specific
+CONFIG_IDF_TARGET="esp32s3"
+
+# CPU Frequency
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+
+# Use custom partition table (needed for bigger app size with Wi-Fi/HTTP)
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# Enable FreeRTOS stats for debugging tasks
+CONFIG_FREERTOS_GENERATE_RUN_TIME_STATS=y
+CONFIG_FREERTOS_USE_TRACE_FACILITY=y
+
+# Compiler options
+CONFIG_COMPILER_CXX_EXCEPTIONS=y
+
+# WiFi Configuration defaults
+CONFIG_ESP_WIFI_AUTH_WPA2_PSK=y
+
+# Flash Size configuration (8MB for XIAO ESP32-S3)
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE="8MB"

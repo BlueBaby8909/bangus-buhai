@@ -1,0 +1,63 @@
+menu "Bangus Buhai Hardware Configuration"
+
+    config BB_TANK_ID
+        int "Tank ID for this device"
+        default 1
+        help
+            The tank_id used when posting water logs to the backend API.
+
+    config BB_BACKEND_URL
+        string "Backend API base URL"
+        default "http://192.168.1.100:8000"
+        help
+            Base URL of the FastAPI backend server.
+
+    config BB_WIFI_SSID
+        string "WiFi SSID"
+        default ""
+        help
+            WiFi network name for the ESP32 station connection.
+
+    config BB_WIFI_PASSWORD
+        string "WiFi Password"
+        default ""
+        help
+            WiFi password for the ESP32 station connection.
+
+    menu "Hardware Pin Assignments"
+
+        config BB_GPIO_DS18B20
+            int "DS18B20 OneWire Data Pin"
+            default 2
+
+        config BB_GPIO_TURBIDITY
+            int "Turbidity Sensor ADC Pin (ADC1 Channel)"
+            default 1
+            help
+                On XIAO ESP32-S3, D0 is GPIO 1.
+
+        config BB_GPIO_I2C_SDA
+            int "LCD I2C SDA Pin"
+            default 4
+
+        config BB_GPIO_I2C_SCL
+            int "LCD I2C SCL Pin"
+            default 5
+
+        config BB_GPIO_RELAY
+            int "Relay Control Pin"
+            default 3
+
+    endmenu
+
+    menu "Thresholds & Behavior"
+
+        config BB_PH_DEFAULT
+            int "Default pH value (x100, e.g., 780 = 7.80)"
+            default 780
+            help
+                Fixed estimated pH value sent since we omitted the physical sensor.
+                
+    endmenu
+
+endmenu
