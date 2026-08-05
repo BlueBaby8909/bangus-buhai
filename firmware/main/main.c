@@ -8,6 +8,7 @@
 
 #include "relay_driver.h"
 #include "ds18b20_sensor.h"
+#include "turbidity_sensor.h"
 
 static const char *TAG = "APP_MAIN";
 
@@ -31,20 +32,34 @@ void app_main(void)
     ESP_LOGI(TAG, "Bangus Buhai Firmware Started");
     ESP_LOGI(TAG, "Configured Tank ID: %d", CONFIG_BB_TANK_ID);
 
-    // TODO: Initialize Relay
+    // Initialize Actuators
     relay_driver_init();
-    // TODO: Initialize Sensors
+
+    // Initialize Sensors
+    ESP_LOGI(TAG, "Initializing Sensors...");
     ESP_ERROR_CHECK(ds18b20_sensor_init());
+    ESP_ERROR_CHECK(turbidity_sensor_init());
+
     // TODO: Initialize LCD
     // TODO: Connect WiFi
 
+    ESP_LOGI(TAG, "Entering Main Loop...");
     while (1) {
         float temp = 0.0f;
+        int voltage = 0;
+
         if (ds18b20_sensor_read(&temp) == ESP_OK) {
             ESP_LOGI(TAG, "Temperature: %.2f C", temp);
         } else {
-            ESP_LOGE(TAG, "Failed to read temperature");
+            ESP_LOGW(TAG, "Failed to read temperature");
         }
-        vTaskDelay(pdMS_TO_TICKS(1000));
+
+        if (turbidity_sensor_read(&voltage) == ESP_OK) {
+            ESP_LOGI(TAG, "Turbidity Voltage: %.2f V", (float)voltage / 1000.0);
+        } else {
+            ESP_LOGW(TAG, "Failed to read turbidity");
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(2000));
     }
 }
