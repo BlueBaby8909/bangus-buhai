@@ -9,6 +9,7 @@
 #include "relay_driver.h"
 #include "ds18b20_sensor.h"
 #include "turbidity_sensor.h"
+#include "lcd_display.h"
 
 static const char *TAG = "APP_MAIN";
 
@@ -37,10 +38,22 @@ void app_main(void)
 
     // Initialize Sensors
     ESP_LOGI(TAG, "Initializing Sensors...");
-    ESP_ERROR_CHECK(ds18b20_sensor_init());
+    if (ds18b20_sensor_init() != ESP_OK) {
+        ESP_LOGW(TAG, "Temperature sensor not found. Continuing without it...");
+    }
     ESP_ERROR_CHECK(turbidity_sensor_init());
 
-    // TODO: Initialize LCD
+    // Initialize LCD
+    ESP_LOGI(TAG, "Initializing LCD...");
+    if (lcd_display_init() == ESP_OK) {
+        lcd_display_set_cursor(0, 0);
+        lcd_display_write_string("BangusBuhai");
+        lcd_display_set_cursor(0, 1);
+        lcd_display_write_string("Initializing...");
+    } else {
+        ESP_LOGE(TAG, "LCD Initialization failed!");
+    }
+
     // TODO: Connect WiFi
 
     ESP_LOGI(TAG, "Entering Main Loop...");
@@ -50,12 +63,25 @@ void app_main(void)
 
         if (ds18b20_sensor_read(&temp) == ESP_OK) {
             ESP_LOGI(TAG, "Temperature: %.2f C", temp);
+            
+            // Format for LCD (e.g. "Temp: 24.5C")
+            char lcd_buf[17];
+            snprintf(lcd_buf, sizeof(lcd_buf), "Temp: %.1fC     ", temp); // Pad with spaces to clear old text
+            lcd_display_set_cursor(0, 0);
+            lcd_display_write_string(lcd_buf);
         } else {
             ESP_LOGW(TAG, "Failed to read temperature");
         }
 
         if (turbidity_sensor_read(&voltage) == ESP_OK) {
-            ESP_LOGI(TAG, "Turbidity Voltage: %.2f V", (float)voltage / 1000.0);
+            float voltage_v = (float)voltage / 1000.0f;
+            ESP_LOGI(TAG, "Turbidity Voltage: %.2f V", voltage_v);
+
+            // Format for LCD (e.g. "Turb: 2.15V")
+            char lcd_buf[17];
+            snprintf(lcd_buf, sizeof(lcd_buf), "Turb: %.2fV     ", voltage_v);
+            lcd_display_set_cursor(0, 1);
+            lcd_display_write_string(lcd_buf);
         } else {
             ESP_LOGW(TAG, "Failed to read turbidity");
         }
