@@ -1,10 +1,3 @@
-import os
-
-# Must be set before TensorFlow is imported. Keeps startup logs limited to
-# warnings/errors instead of the usual flood of build/CPU-instruction INFO
-# lines; does not affect model behavior or accuracy.
-os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2")
-
 import warnings
 from pathlib import Path
 from typing import List
@@ -21,9 +14,6 @@ from ml.models.bangus_lstm import BangusLSTM
 # ============================================================================
 
 # Number of historical water-log readings the model expects per prediction.
-# Must match the InputLayer batch_shape (None, 48, 3) baked into the .keras
-# file, and the row count/order the scaler was fit on (Temperature, pH,
-# Turbidity). Do not change this without retraining the model.
 SEQ_LENGTH = 48
 
 # Resolved relative to this file (not the process cwd), so the model loads
@@ -47,14 +37,7 @@ _scaler = None
 def load_resources():
     """
     Loads the trained model and scaler into memory.
-
-    Safe to call multiple times. Raises FileNotFoundError with the exact
-    expected path if either artifact is missing, and lets any underlying
-    load error (e.g. an incompatible keras/scikit-learn version) propagate
-    unmodified so the real cause is visible instead of being hidden behind
-    a generic failure.
     """
-
     global _model, _scaler
 
     if _model is None:
@@ -65,7 +48,7 @@ def load_resources():
             )
         # Initialize model architecture and load state dict
         _model = BangusLSTM()
-        checkpoint = torch.load(MODEL_PATH, map_location=torch.device('cpu'))
+        checkpoint = torch.load(MODEL_PATH, map_location=torch.device('cpu'), weights_only=False)
         _model.load_state_dict(checkpoint["state_dict"])
         _model.eval()
 
@@ -97,11 +80,8 @@ def get_scaler():
 def logs_to_numpy(logs: List[WaterLog]) -> np.ndarray:
     """
     Converts WaterLog objects into a NumPy array.
-
-    Shape:
-        (48,3)
+    Shape: (48, 3)
     """
-
     return np.array(
         [
             [
@@ -115,33 +95,20 @@ def logs_to_numpy(logs: List[WaterLog]) -> np.ndarray:
     )
 
 
-def prepare_sequence(logs: List[WaterLog]) -> np.ndarray:
+def prepare_sequence(logs: List[WaterLog]) -> torch.Tensor:
     """
-    Creates the model input.
-
-    Expects `logs` in chronological order (oldest -> newest); the caller
-    (services/prediction_service.py) is responsible for that ordering.
-
-    Returns:
-        (1,48,3)
+    Creates the model input sequence.
+    Expects `logs` in chronological order (oldest -> newest).
+    Returns tensor of shape (1, 48, 3).
     """
-
     if len(logs) < SEQ_LENGTH:
         raise ValueError(
             f"Model requires {SEQ_LENGTH} water logs, got {len(logs)}."
         )
 
     scaler = get_scaler()
-
     data = logs_to_numpy(logs)
 
-    # scaler.transform expects a plain (N, 3) array in the same column
-    # order it was fit on (Temperature, pH, Turbidity), which logs_to_numpy
-    # guarantees. sklearn emits a UserWarning here because the scaler was
-    # originally fit on a named DataFrame and we pass a raw ndarray; the
-    # warning is purely informational (column order, not column names,
-    # is what actually drives the transform) so it's suppressed rather
-    # than pulling in pandas just to silence it.
     with warnings.catch_warnings():
         warnings.filterwarnings(
             "ignore",
@@ -152,11 +119,7 @@ def prepare_sequence(logs: List[WaterLog]) -> np.ndarray:
 
     sequence = scaled[-SEQ_LENGTH:]
     sequence = np.expand_dims(sequence, axis=0)
-
-    # Convert to PyTorch tensor
-    tensor_sequence = torch.as_tensor(sequence, dtype=torch.float32)
-
-    return tensor_sequence
+    return torch.as_tensor(sequence, dtype=torch.float32)
 
 
 # ============================================================================
@@ -165,39 +128,41 @@ def prepare_sequence(logs: List[WaterLog]) -> np.ndarray:
 
 def predict(logs: List[WaterLog]) -> dict:
     """
-    Predict future Temperature, pH and Turbidity.
-
-    Returns:
-    {
-        temperature,
-        pH,
-        turbidity
-    }
+    Predict future Temperature, pH and Turbidity for 1, 2, 3, and 4 hours ahead
+    using autoregressive forecasting.
     """
-
     model = get_model()
     scaler = get_scaler()
 
     sequence = prepare_sequence(logs)
+    predictions = {}
 
     with torch.no_grad():
-        prediction_scaled = model(sequence).cpu().numpy()
+        for horizon in range(1, 5):
+            # Model output shape: (1, 3)
+            prediction_scaled = model(sequence)
+            
+            # Inverse transform
+            pred_np = prediction_scaled.cpu().numpy()
+            with warnings.catch_warnings():
+                warnings.filterwarnings(
+                    "ignore",
+                    message="X does not have valid feature names",
+                    category=UserWarning,
+                )
+                real_pred = scaler.inverse_transform(pred_np)[0]
+                
+            predictions[f"hour_{horizon}"] = {
+                "temperature": float(real_pred[0]),
+                "pH": float(real_pred[1]),
+                "turbidity": float(real_pred[2]),
+            }
+            
+            # Autoregressive update: append new prediction, drop oldest point
+            next_step = prediction_scaled.unsqueeze(1) # shape: (1, 1, 3)
+            sequence = torch.cat([sequence[:, 1:, :], next_step], dim=1)
 
-    with warnings.catch_warnings():
-        warnings.filterwarnings(
-            "ignore",
-            message="X does not have valid feature names",
-            category=UserWarning,
-        )
-        prediction = scaler.inverse_transform(prediction_scaled)
-
-    prediction = prediction[0]
-
-    return {
-        "temperature": float(prediction[0]),
-        "pH": float(prediction[1]),
-        "turbidity": float(prediction[2]),
-    }
+    return predictions
 
 
 # ============================================================================
@@ -205,4 +170,4 @@ def predict(logs: List[WaterLog]) -> dict:
 # ============================================================================
 
 def is_model_loaded() -> bool:
-    return _model is not None and _scaler is not None
+    return _model is not None and _scaler is not None

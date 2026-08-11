@@ -8,11 +8,11 @@ html,
 body {
   margin: 0;
   padding: 0;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
 }
 
 body {
-  background: var(--paper);
-  color: var(--ink);
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.5;
@@ -23,17 +23,17 @@ h1, h2, h3, h4 {
   font-family: var(--font-display);
   font-weight: 600;
   margin: 0;
-  color: var(--ink);
+  color: var(--text-main);
 }
 
 h1 { font-size: 34px; letter-spacing: -0.01em; }
 h2 { font-size: 24px; letter-spacing: -0.01em; }
 h3 { font-size: 18px; }
 
-p { margin: 0; }
+p { margin: 0; color: var(--text-muted); }
 
 a {
-  color: var(--water);
+  color: var(--primary);
   text-decoration: none;
 }
 
@@ -52,12 +52,12 @@ input, select, textarea {
 }
 
 ::selection {
-  background: var(--water-tint);
-  color: var(--ink);
+  background: var(--primary-glow);
+  color: var(--text-main);
 }
 
 *:focus-visible {
-  outline: 2px solid var(--water);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -68,3 +68,4 @@ input, select, textarea {
     transition-duration: 0.001ms !important;
   }
 }
+

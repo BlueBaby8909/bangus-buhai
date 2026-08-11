@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlmodel import Session, select
-from datetime import timedelta
+from datetime import timedelta, timezone, datetime
 
 from models.water_log import WaterLog
 from models.tank_profile import TankProfile
@@ -47,14 +47,27 @@ def create_prediction(tank_id: int, db: Session) -> PredictionRead:
     if any(log.ph_source != "sensor" for log in logs):
         confidence = 0.8
 
-    prediction = predict(logs)
+    predictions_dict = predict(logs)
 
     prediction_db = Prediction(
         tank_id=tank_id,
-        temperature=prediction["temperature"],
-        pH=prediction["pH"],
-        turbidity=prediction["turbidity"],
-        predicted_for=logs[-1].recorded_at + timedelta(hours=3),
+        temperature_1h=predictions_dict["hour_1"]["temperature"],
+        pH_1h=predictions_dict["hour_1"]["pH"],
+        turbidity_1h=predictions_dict["hour_1"]["turbidity"],
+        
+        temperature_2h=predictions_dict["hour_2"]["temperature"],
+        pH_2h=predictions_dict["hour_2"]["pH"],
+        turbidity_2h=predictions_dict["hour_2"]["turbidity"],
+        
+        temperature_3h=predictions_dict["hour_3"]["temperature"],
+        pH_3h=predictions_dict["hour_3"]["pH"],
+        turbidity_3h=predictions_dict["hour_3"]["turbidity"],
+        
+        temperature_4h=predictions_dict["hour_4"]["temperature"],
+        pH_4h=predictions_dict["hour_4"]["pH"],
+        turbidity_4h=predictions_dict["hour_4"]["turbidity"],
+
+        predicted_from=logs[-1].recorded_at,
         confidence_score=confidence,
     )
 
@@ -100,4 +113,4 @@ def get_latest_prediction(tank_id: int, db: Session) -> PredictionRead:
             detail="No predictions found for this tank."
         )
 
-    return PredictionRead.model_validate(prediction)
+    return PredictionRead.model_validate(prediction)

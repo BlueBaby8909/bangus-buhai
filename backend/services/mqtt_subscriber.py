@@ -107,4 +107,20 @@ class MQTTSubscriber:
                 except Exception as e:
                     logger.error(f"Error processing MQTT message: {e}")
 
+    async def publish_relay_command(self, device_id: str, relay_on: bool):
+        topic = f"{settings.mqtt_topic_prefix}/devices/{device_id}/command/relay"
+        payload = json.dumps({"relay_on": relay_on})
+        try:
+            async with aiomqtt.Client(
+                hostname=settings.mqtt_broker_host,
+                port=settings.mqtt_broker_port,
+                username=settings.mqtt_username or None,
+                password=settings.mqtt_password or None,
+            ) as client:
+                await client.publish(topic, payload, qos=1)
+                logger.info(f"Published relay command to {topic}: {payload}")
+        except Exception as e:
+            logger.error(f"Failed to publish relay command to {device_id}: {e}")
+            raise e
+
 mqtt_subscriber = MQTTSubscriber()

@@ -9,9 +9,9 @@ import { THRESHOLDS, toneForMetric } from "../lib/waterQuality";
 import { DeviceStatus } from "../components/DeviceStatus";
 import { PhSourceBadge } from "../components/PhSourceBadge";
 import { getWsUrl } from "../api/client";
-import { PredictionCard } from "../components/PredictionCard";
+import { MLPredictions } from "../components/MLPredictions";
+import { RelayControl } from "../components/RelayControl";
 import { WaterLogChart } from "../components/WaterLogChart";
-
 export default function TankDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -27,6 +27,7 @@ export default function TankDetail() {
   const [formError, setFormError] = useState(null);
   
   const [deviceState, setDeviceState] = useState({ isOnline: false, lastSeen: null, deviceId: null });
+  const [optimisticRelay, setOptimisticRelay] = useState(null);
 
   const loadAll = useCallback(() => {
     setLoading(true);
@@ -39,6 +40,9 @@ export default function TankDetail() {
         setSummary(s);
         setWaterLogs(logs.slice().reverse());
         setPrediction(pred);
+        if (s?.latest_water_log) {
+          setOptimisticRelay(s.latest_water_log.relay_on);
+        }
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
@@ -68,8 +72,9 @@ export default function TankDetail() {
           if (data.type === "new_reading" && data.water_log) {
             setWaterLogs(prev => [data.water_log, ...prev]);
             setSummary(prev => prev ? { ...prev, latest_water_log: data.water_log, total_water_logs: prev.total_water_logs + 1 } : prev);
+            setOptimisticRelay(data.water_log.relay_on);
           } else if (data.type === "device_status") {
-            setDeviceState(prev => ({ ...prev, isOnline: data.is_online }));
+            setDeviceState(prev => ({ ...prev, isOnline: data.is_online, deviceId: data.device_id || prev.deviceId }));
           }
         } catch (err) {
           console.error("WebSocket message parse error", err);
@@ -112,15 +117,6 @@ export default function TankDetail() {
     if (!confirm(`Delete "${summary?.tank?.name}"? This cannot be undone.`)) return;
     await api.deleteTank(id);
     navigate("/");
-  };
-
-  const handleToggleHeater = async (e) => {
-    const turnOn = e.target.checked;
-    try {
-      await api.sendCommand(deviceState.deviceId, { relay: "heater", state: turnOn });
-    } catch (err) {
-      alert("Failed to send command to device: " + err.message);
-    }
   };
 
   if (loading) return <div className="loading-strip">Loading tank...</div>;
@@ -215,31 +211,14 @@ export default function TankDetail() {
           )}
         </div>
 
-        <div className="card">
-          <h3 style={{ marginBottom: "16px" }}>Manual Controls</h3>
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
-            <div>
-              <div className="font-medium text-gray-800">Heater Relay</div>
-              <div className="text-sm text-gray-500">Override thermostat manually</div>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input 
-                type="checkbox" 
-                className="sr-only peer" 
-                disabled={!deviceState.isOnline || !deviceState.deviceId}
-                checked={latest?.relay_on || false}
-                onChange={handleToggleHeater}
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-            </label>
-          </div>
-          {!deviceState.isOnline && (
-            <div className="text-xs text-red-500 mt-2">Device is offline. Controls disabled.</div>
-          )}
-        </div>
+        <RelayControl 
+          deviceId={deviceState.deviceId} 
+          initialRelayState={optimisticRelay ?? (latest?.relay_on || false)} 
+          disabled={!deviceState.isOnline} 
+        />
       </div>
 
-      <PredictionCard prediction={prediction} />
+      <MLPredictions prediction={prediction} />
       
       <WaterLogChart logs={waterLogs} />
 

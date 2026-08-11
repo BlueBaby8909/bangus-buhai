@@ -19,10 +19,9 @@ def create_tank(tank_profile: CreateTankProfile, db: Session = Depends(get_sessi
 def get_all_tanks(
     skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=100),
-    owner_id: int | None = None,
     db: Session = Depends(get_session),
 ):
-    return service.get_all_tanks(skip=skip, limit=limit, owner_id=owner_id, db=db)
+    return service.get_all_tanks(skip=skip, limit=limit, db=db)
 
 
 @router.get("/{tank_id}", response_model=TankProfile, status_code=status.HTTP_200_OK)
