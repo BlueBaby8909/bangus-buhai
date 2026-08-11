@@ -1,3 +1,7 @@
+from models.water_log import WaterLog
+from models.feeding_log import FeedingLog
+from models.prediction import Prediction
+
 from fastapi import HTTPException
 from models.tank_profile import CreateTankProfile, TankProfile
 from sqlmodel import Session, select
@@ -52,11 +56,18 @@ def update_tank(tank_id: int, tank_data: CreateTankProfile, db: Session):
     db.refresh(tank)
     return tank
 
-
 def delete_tank(tank_id: int, db: Session):
     tank = db.get(TankProfile, tank_id)
     if not tank:
         raise HTTPException(status_code=404, detail="Tank not found")
+
+    for log in db.exec(select(WaterLog).where(WaterLog.tank_id == tank_id)).all():
+        db.delete(log)
+    for feeding in db.exec(select(FeedingLog).where(FeedingLog.tank_id == tank_id)).all():
+        db.delete(feeding)
+    for prediction in db.exec(select(Prediction).where(Prediction.tank_id == tank_id)).all():
+        db.delete(prediction)
+
     db.delete(tank)
     db.commit()
     return {"message": "Tank deleted successfully!"}
