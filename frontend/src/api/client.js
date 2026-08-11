@@ -34,11 +34,6 @@ async function request(path, options = {}) {
 const asJson = (data) => JSON.stringify(data);
 
 export const api = {
-  // Users
-  listUsers: (params = {}) => request(`/users/?${new URLSearchParams(params)}`),
-  createUser: (data) => request(`/users/`, { method: "POST", body: asJson(data) }),
-  updateUser: (id, data) => request(`/users/${id}`, { method: "PUT", body: asJson(data) }),
-  deleteUser: (id) => request(`/users/${id}`, { method: "DELETE" }),
 
   // Tanks
   listTanks: (params = {}) => request(`/tanks/?${new URLSearchParams(params)}`),
@@ -56,13 +51,28 @@ export const api = {
   deleteWaterLog: (tankId, logId) =>
     request(`/tanks/${tankId}/logs/${logId}`, { method: "DELETE" }),
 
-  // Feeding logs
-  listFeedingLogs: (tankId, params = {}) =>
-    request(`/tanks/${tankId}/feedings?${new URLSearchParams(params)}`),
-  createFeedingLog: (tankId, data) =>
-    request(`/tanks/${tankId}/feedings`, { method: "POST", body: asJson(data) }),
-  deleteFeedingLog: (tankId, feedingId) =>
-    request(`/tanks/${tankId}/feedings/${feedingId}`, { method: "DELETE" }),
+
+  // Devices
+  listDevices: () => request(`/devices/`),
+  getDevice: (id) => request(`/devices/${id}`),
+  sendCommand: (id, command) => request(`/devices/${id}/command`, { method: "POST", body: asJson(command) }),
+
+  // Predictions
+  getLatestPrediction: (tankId) => request(`/predictions/latest?tank_id=${tankId}`),
+};
+
+export const getWsUrl = (path) => {
+  const isHttps = window.location.protocol === "https:";
+  const wsProtocol = isHttps ? "wss:" : "ws:";
+  
+  // If BASE_URL is an absolute URL (e.g. http://localhost:8000), use its host.
+  // Otherwise, use the window's host.
+  try {
+    const apiURL = new URL(BASE_URL);
+    return `${wsProtocol}//${apiURL.host}${path}`;
+  } catch {
+    return `${wsProtocol}//${window.location.host}${path}`;
+  }
 };
 
 export { ApiError };

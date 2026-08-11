@@ -1,5 +1,30 @@
-# Name,     Type, SubType, Offset,  Size,   Flags
-nvs,        data, nvs,     0x9000,  0x6000,
-phy_init,   data, phy,     0xf000,  0x1000,
-factory,    app,  factory, 0x10000, 0x200000,
-storage,    data, fat,     ,        0x100000,
+# Name,      Type,  SubType,   Offset,    Size,      Flags
+# ---------------------------------------------------------------------------
+# 8 MB flash layout for XIAO ESP32-S3 with OTA support.
+#
+# Layout overview:
+#   nvs       - Non-volatile storage (Wi-Fi credentials, provisioning state)
+#   otadata   - OTA bookkeeping (which partition to boot from)
+#   phy_init  - RF calibration data
+#   ota_0     - Active firmware slot
+#   ota_1     - Standby firmware slot (OTA target)
+#   storage   - FAT filesystem for local data, logs, config files
+#   coredump  - Core dump for post-mortem crash analysis in the field
+#
+# OTA design:
+#   Both ota_0 and ota_1 are 1.5 MB. With TLS + MQTT + Wi-Fi provisioning,
+#   the firmware binary is typically 1.0-1.3 MB. 1.5 MB gives comfortable
+#   headroom for future feature additions without repartitioning.
+#
+# Rollback:
+#   Enable CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=y (set in sdkconfig.defaults).
+#   After OTA, new firmware must call esp_ota_mark_app_valid_cancel_rollback()
+#   within a configurable window, otherwise the bootloader rolls back.
+# ---------------------------------------------------------------------------
+nvs,       data,  nvs,       0x9000,    0x6000,
+otadata,   data,  ota,       0xF000,    0x2000,
+phy_init,  data,  phy,       0x11000,   0x1000,
+ota_0,     app,   ota_0,     0x20000,   0x180000,
+ota_1,     app,   ota_1,     0x1A0000,  0x180000,
+storage,   data,  fat,       0x320000,  0x0C0000,
+coredump,  data,  coredump,  0x3E0000,  0x10000,

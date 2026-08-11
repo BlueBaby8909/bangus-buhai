@@ -19,6 +19,13 @@ void relay_driver_init(void);
  */
 void relay_driver_set_state(bool turn_on);
 
+/**
+ * @brief Get the current relay state
+ * 
+ * @return true if on, false if off
+ */
+bool relay_driver_get_state(void);
+
 #ifdef __cplusplus
 }
 #endif

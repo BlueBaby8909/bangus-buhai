@@ -1,6 +1,7 @@
 #include "lcd_display.h"
 #include "esp_log.h"
 #include "sdkconfig.h"
+#include "esp_rom_sys.h"
 
 #include "driver/i2c_master.h"
 #include "freertos/FreeRTOS.h"

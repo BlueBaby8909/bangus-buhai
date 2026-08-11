@@ -1,23 +1,88 @@
-# ESP32-S3 Specific
+# =============================================================================
+# Bangus Buhai — sdkconfig.defaults
+#
+# These are the baseline configuration overrides for the ESP32-S3 target.
+# Settings here are applied to a fresh build without needing menuconfig.
+# Run `idf.py menuconfig` to inspect or change them interactively.
+# =============================================================================
+
+# Target chip
 CONFIG_IDF_TARGET="esp32s3"
 
-# CPU Frequency
+# CPU frequency
 CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
 
-# Use custom partition table (needed for bigger app size with Wi-Fi/HTTP)
+# Custom partition table (OTA-enabled layout)
 CONFIG_PARTITION_TABLE_CUSTOM=y
 CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
 
-# Enable FreeRTOS stats for debugging tasks
+# Flash size (8MB XIAO ESP32-S3)
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE="8MB"
+
+# =============================================================================
+# Wi-Fi
+# =============================================================================
+# The Wi-Fi driver stores SSID/password in NVS automatically.
+# wifi_prov_mgr uses NVS to persist provisioning state.
+CONFIG_ESP_WIFI_NVS_ENABLED=y
+CONFIG_ESP_WIFI_AUTH_WPA2_PSK=y
+
+# =============================================================================
+# Bluetooth (required for BLE — kept enabled for future BLE provisioning option)
+# Currently using SoftAP provisioning which does not need BLE at runtime,
+# but having BT enabled lets you switch to BLE provisioning by changing
+# wifi_prov_scheme_softap → wifi_prov_scheme_ble without a config rebuild.
+# Set to n to save ~100KB flash if BLE is definitively not needed.
+# =============================================================================
+CONFIG_BT_ENABLED=y
+CONFIG_BT_NIMBLE_ENABLED=y
+
+# =============================================================================
+# Task Watchdog Timer
+# =============================================================================
+CONFIG_ESP_TASK_WDT_EN=y
+CONFIG_ESP_TASK_WDT_TIMEOUT_S=30
+# Panic (hard reset) rather than just logging on watchdog expiry.
+# In production this ensures the device always recovers from hangs.
+CONFIG_ESP_TASK_WDT_PANIC=y
+
+# =============================================================================
+# OTA (Over-The-Air Updates)
+# =============================================================================
+# Rollback: if new firmware does not call esp_ota_mark_app_valid_cancel_rollback()
+# within the boot, the bootloader automatically reverts to the previous version.
+# This prevents bricking devices with bad firmware updates.
+CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=y
+
+# =============================================================================
+# MQTT buffer sizes
+# =============================================================================
+# 1024 bytes covers the telemetry JSON payload comfortably (typically ~300 bytes).
+# The outbox holds QoS 1 messages while waiting for PUBACK.
+CONFIG_MQTT_BUFFER_SIZE=1024
+CONFIG_MQTT_OUTBOX_SIZE_LIMIT=8192
+
+# =============================================================================
+# FreeRTOS diagnostics (useful during development; disable for production build)
+# =============================================================================
 CONFIG_FREERTOS_GENERATE_RUN_TIME_STATS=y
 CONFIG_FREERTOS_USE_TRACE_FACILITY=y
 
-# Compiler options
+# =============================================================================
+# Compiler
+# =============================================================================
 CONFIG_COMPILER_CXX_EXCEPTIONS=y
 
-# WiFi Configuration defaults
-CONFIG_ESP_WIFI_AUTH_WPA2_PSK=y
+# =============================================================================
+# Log level
+# =============================================================================
+# INFO during development; set to WARN or ERROR for production to reduce
+# serial output overhead.
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
 
-# Flash Size configuration (8MB for XIAO ESP32-S3)
-CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
-CONFIG_ESPTOOLPY_FLASHSIZE="8MB"
+CONFIG_ESP_PROTOCOMM_SUPPORT_SECURITY_VERSION_1=y
+
+
+CONFIG_BB_MQTT_BROKER_URI="mqtt://192.168.1.2:1883"
+

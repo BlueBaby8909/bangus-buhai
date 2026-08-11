@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import GaugeRing from "./GaugeRing";
+import { DeviceStatus } from "./DeviceStatus";
 
-export default function TankCard({ tank }) {
+export default function TankCard({ tank, device }) {
   const navigate = useNavigate();
   const [summary, setSummary] = useState(null);
 
@@ -26,6 +27,9 @@ export default function TankCard({ tank }) {
         <div>
           <div className="tank-card__name">{tank.name}</div>
           <div className="tank-card__stage">{tank.growth_stage}</div>
+          {device && (
+            <DeviceStatus isOnline={device.is_online} lastSeen={device.last_seen} style={{ marginTop: "4px" }} />
+          )}
         </div>
         <GaugeRing status={status} size={64} />
       </div>

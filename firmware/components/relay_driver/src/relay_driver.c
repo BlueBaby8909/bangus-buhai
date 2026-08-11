@@ -8,6 +8,8 @@ static const char *TAG = "RELAY_DRIVER";
 #define RELAY_ON_LEVEL  0
 #define RELAY_OFF_LEVEL 1
 
+static bool s_relay_state = false;
+
 void relay_driver_init(void)
 {
     ESP_LOGI(TAG, "Initializing Relay on GPIO %d", CONFIG_BB_GPIO_RELAY);
@@ -27,6 +29,7 @@ void relay_driver_init(void)
 
 void relay_driver_set_state(bool turn_on)
 {
+    s_relay_state = turn_on;
     if (turn_on){
         gpio_set_level(CONFIG_BB_GPIO_RELAY, RELAY_ON_LEVEL);
         ESP_LOGI(TAG, "RELAY: ON");
@@ -34,4 +37,9 @@ void relay_driver_set_state(bool turn_on)
         gpio_set_level(CONFIG_BB_GPIO_RELAY, RELAY_OFF_LEVEL);
         ESP_LOGI(TAG, "RELAY: OFF");
     }
+}
+
+bool relay_driver_get_state(void)
+{
+    return s_relay_state;
 }

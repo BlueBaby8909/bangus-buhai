@@ -1,0 +1,13 @@
+# Placeholder CA certificate for Mosquitto broker.
+#
+# Replace this file with the actual CA certificate (ca.crt) from your
+# Mosquitto installation.
+#
+# To get it:
+#   From the mosquitto/ directory in this repo (after running setup):
+#   Copy  mosquitto/certs/ca.crt  to this file.
+#
+# Or if using a managed broker (e.g. EMQX Cloud), download their root CA.
+#
+# This placeholder keeps the build working. TLS will not function until
+# the real cert is placed here.

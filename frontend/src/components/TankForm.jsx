@@ -2,12 +2,11 @@ import { useState } from "react";
 
 const GROWTH_STAGES = ["fry", "fingerling", "juvenile", "adult"];
 
-export default function TankForm({ onSubmit, submitting, error, users = [] }) {
+export default function TankForm({ onSubmit, submitting, error }) {
   const [form, setForm] = useState({
     name: "",
     volume_ml: "",
     growth_stage: "fingerling",
-    owner_id: "",
   });
 
   const update = (key) => (e) => setForm({ ...form, [key]: e.target.value });
@@ -18,7 +17,6 @@ export default function TankForm({ onSubmit, submitting, error, users = [] }) {
       name: form.name,
       volume_ml: Number(form.volume_ml),
       growth_stage: form.growth_stage,
-      owner_id: form.owner_id ? Number(form.owner_id) : null,
     });
   };
 
@@ -62,19 +60,7 @@ export default function TankForm({ onSubmit, submitting, error, users = [] }) {
         </select>
       </div>
 
-      {users.length > 0 && (
-        <div className="form-row">
-          <label htmlFor="owner">Grower (optional)</label>
-          <select id="owner" value={form.owner_id} onChange={update("owner_id")}>
-            <option value="">Unassigned</option>
-            {users.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+
 
       <div className="form-actions">
         <button type="submit" className="btn btn-primary" disabled={submitting}>

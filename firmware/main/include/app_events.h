@@ -1,5 +1,20 @@
-#ifndef APP_EVENTS_H
-#define APP_EVENTS_H
+/**
+ * @file app_events.h
+ * @brief Application-level event bases and payloads for the Bangus Buhai firmware.
+ *
+ * Using the ESP-IDF event loop for inter-task communication is preferred over
+ * polling shared variables because:
+ *  - Tasks block efficiently instead of burning CPU in tight loops.
+ *  - Event payload carries structured data without global variables.
+ *  - Components remain decoupled — the sensor service doesn't need to know
+ *    about the telemetry service; it just posts an event.
+ *
+ * Event bases:
+ *   SENSOR_EVENTS  — posted by sensor_service when readings are ready
+ *   SYSTEM_EVENTS  — posted by wifi_manager for connection state changes
+ */
+
+#pragma once
 
 #include "esp_event.h"
 #include <stdbool.h>
@@ -9,35 +24,25 @@
 extern "C" {
 #endif
 
-// Declare Event Bases
+/* ── Event bases ────────────────────────────────────────────────────────────── */
 ESP_EVENT_DECLARE_BASE(SENSOR_EVENTS);
 ESP_EVENT_DECLARE_BASE(SYSTEM_EVENTS);
 
-// Sensor Event IDs
+/* ── Sensor event IDs ──────────────────────────────────────────────────────── */
 typedef enum {
-    SENSOR_EVENT_DATA_READY,      // Filtered sensor readings are available
-    SENSOR_EVENT_TEMP_CRITICAL,   // Temperature outside safe range
-    SENSOR_EVENT_READ_ERROR,      // Sensor hardware read failure
+    SENSOR_EVENT_DATA_READY,      /**< A new filtered reading is available     */
+    SENSOR_EVENT_TEMP_CRITICAL,   /**< Temperature is outside safe range       */
+    SENSOR_EVENT_READ_ERROR,      /**< Both sensors failed in the same cycle   */
 } sensor_event_id_t;
 
-// System Event IDs
+/* ── System event IDs ──────────────────────────────────────────────────────── */
 typedef enum {
-    SYSTEM_EVENT_WIFI_CONNECTED,
-    SYSTEM_EVENT_WIFI_DISCONNECTED,
+    SYSTEM_EVENT_WIFI_CONNECTED,       /**< STA got IP                          */
+    SYSTEM_EVENT_WIFI_DISCONNECTED,    /**< STA lost IP or disconnected         */
+    SYSTEM_EVENT_MQTT_CONNECTED,       /**< MQTT client connected to broker     */
+    SYSTEM_EVENT_MQTT_DISCONNECTED,    /**< MQTT client disconnected from broker*/
 } system_event_id_t;
-
-// Payload for SENSOR_EVENT_DATA_READY
-typedef struct {
-    float    temperature_c;
-    float    turbidity_ntu;
-    float    ph_estimated;       // Will be filled with CONFIG_BB_PH_DEFAULT / 100.0
-    uint32_t timestamp_ms;
-    bool     temp_valid;
-    bool     turbidity_valid;
-} sensor_reading_t;
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif // APP_EVENTS_H

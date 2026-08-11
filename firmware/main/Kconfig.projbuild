@@ -1,63 +1,130 @@
-menu "Bangus Buhai Hardware Configuration"
+menu "Bangus Buhai Configuration"
 
+    # -------------------------------------------------------------------------
+    # Device identity
+    # -------------------------------------------------------------------------
     config BB_TANK_ID
         int "Tank ID for this device"
         default 1
         help
-            The tank_id used when posting water logs to the backend API.
+            The tank_id included in every MQTT telemetry payload.
+            Must match the tank record in the backend database.
+            Each physical device should be flashed with the correct tank ID.
 
-    config BB_BACKEND_URL
-        string "Backend API base URL"
-        default "http://192.168.1.100:8000"
+    config BB_DEVICE_NAME_PREFIX
+        string "SoftAP provisioning AP name prefix"
+        default "BB-SETUP"
         help
-            Base URL of the FastAPI backend server.
+            The device creates a Wi-Fi hotspot named "<PREFIX>-XXXXXX" during
+            provisioning, where XXXXXX is the last 3 bytes of the MAC address.
+            Users connect to this AP from their phone browser.
 
-    config BB_WIFI_SSID
-        string "WiFi SSID"
+    # -------------------------------------------------------------------------
+    # MQTT broker
+    # -------------------------------------------------------------------------
+    config BB_MQTT_BROKER_URI
+        string "MQTT broker URI"
+        default "mqtt://192.168.1.100:1883"
+        help
+            URI of the MQTT broker.
+            Examples:
+              mqtt://192.168.1.100:1883     (local, no TLS — development only)
+              mqtts://your-server.com:8883  (TLS — required for production)
+            When using TLS, ensure the CA certificate is placed at:
+              firmware/components/telemetry_service/certs/mosquitto_ca.crt
+
+    config BB_MQTT_TOPIC_PREFIX
+        string "MQTT topic prefix"
+        default "bangusbuhai"
+        help
+            Root prefix for all MQTT topics.
+            Full topic format: <prefix>/devices/<device_id>/<type>
+            Example: bangusbuhai/devices/BB-AABBCCDD1122/telemetry
+
+    config BB_MQTT_USERNAME
+        string "MQTT broker username"
+        default "bangus_device"
+        help
+            Username for MQTT broker authentication.
+            Must match the credentials configured in mosquitto.conf.
+
+    config BB_MQTT_PASSWORD
+        string "MQTT broker password"
         default ""
         help
-            WiFi network name for the ESP32 station connection.
+            Password for MQTT broker authentication.
+            Leave blank only for brokers with anonymous access (not recommended
+            for production).
 
-    config BB_WIFI_PASSWORD
-        string "WiFi Password"
-        default ""
+    config BB_MQTT_USE_TLS
+        bool "Enable TLS for MQTT connection"
+        default n
         help
-            WiFi password for the ESP32 station connection.
+            Set to y for production. Requires a valid CA certificate at:
+              firmware/components/telemetry_service/certs/mosquitto_ca.crt
+            Set to n for local development without TLS.
 
-    menu "Hardware Pin Assignments"
+    # -------------------------------------------------------------------------
+    # pH sensor (prototype — hardware absent)
+    # -------------------------------------------------------------------------
+    config BB_PH_DEFAULT
+        int "Default estimated pH value (×100, e.g. 780 = 7.80)"
+        default 780
+        help
+            Fixed pH value sent in MQTT payloads when no pH sensor is present.
+            This prototype does not have a pH sensor, so a typical milkfish
+            pond pH (7.80) is used as a constant estimate.
+
+            The firmware sends ph_source = "default" alongside this value so
+            the backend and frontend can distinguish it from a real measurement.
+
+            When a real pH sensor is added:
+              1. Read the sensor in sensor_service.c
+              2. Pass the reading to telemetry_service_send_data()
+              3. Pass ph_source = "sensor"
+            No other changes are required.
+
+    # -------------------------------------------------------------------------
+    # GPIO pin assignments
+    # -------------------------------------------------------------------------
+    menu "GPIO Pin Assignments"
 
         config BB_GPIO_DS18B20
-            int "DS18B20 OneWire Data Pin"
+            int "DS18B20 OneWire data pin (GPIO number)"
             default 2
+            help
+                GPIO pin connected to the DS18B20 data line.
+                On XIAO ESP32-S3: D1 = GPIO 2.
 
         config BB_GPIO_TURBIDITY
-            int "Turbidity Sensor ADC Pin (ADC1 Channel)"
+            int "Turbidity sensor ADC pin (GPIO number)"
             default 1
             help
-                On XIAO ESP32-S3, D0 is GPIO 1.
+                GPIO pin connected to the turbidity sensor analog output.
+                Must be an ADC1-capable pin.
+                On XIAO ESP32-S3: D0 = GPIO 1.
 
         config BB_GPIO_I2C_SDA
-            int "LCD I2C SDA Pin"
+            int "I2C SDA pin for LCD (GPIO number)"
             default 4
+            help
+                I2C data line for the 16×2 LCD display (PCF8574 backpack).
+                On XIAO ESP32-S3: D2 = GPIO 4.
 
         config BB_GPIO_I2C_SCL
-            int "LCD I2C SCL Pin"
+            int "I2C SCL pin for LCD (GPIO number)"
             default 5
+            help
+                I2C clock line for the 16×2 LCD display.
+                On XIAO ESP32-S3: D3 = GPIO 5.
 
         config BB_GPIO_RELAY
-            int "Relay Control Pin"
+            int "Relay control pin (GPIO number)"
             default 3
-
-    endmenu
-
-    menu "Thresholds & Behavior"
-
-        config BB_PH_DEFAULT
-            int "Default pH value (x100, e.g., 780 = 7.80)"
-            default 780
             help
-                Fixed estimated pH value sent since we omitted the physical sensor.
-                
+                GPIO pin connected to the relay module signal input.
+                On XIAO ESP32-S3: D10 = GPIO 3.
+
     endmenu
 
 endmenu

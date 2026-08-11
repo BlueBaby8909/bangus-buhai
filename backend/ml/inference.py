@@ -11,9 +11,10 @@ from typing import List
 
 import joblib
 import numpy as np
-from keras.models import load_model
+import torch
 
 from models.water_log import WaterLog
+from ml.models.bangus_lstm import BangusLSTM
 
 # ============================================================================
 # Configuration
@@ -28,7 +29,7 @@ SEQ_LENGTH = 48
 # Resolved relative to this file (not the process cwd), so the model loads
 # correctly no matter where `uvicorn`/`python` is invoked from.
 MODEL_DIR = Path(__file__).parent / "models"
-MODEL_PATH = MODEL_DIR / "bangus_buhai_lstm_exp2.keras"
+MODEL_PATH = MODEL_DIR / "bangus_buhai_lstm_pytorch.pt"
 SCALER_PATH = MODEL_DIR / "bangus_buhai_scaler.pkl"
 
 # ============================================================================
@@ -60,9 +61,13 @@ def load_resources():
         if not MODEL_PATH.exists():
             raise FileNotFoundError(
                 f"ML model file not found at {MODEL_PATH}. "
-                "Expected 'bangus_buhai_lstm_exp2.keras' in ml/models/."
+                "Expected 'bangus_buhai_lstm_pytorch.pt' in ml/models/."
             )
-        _model = load_model(MODEL_PATH)
+        # Initialize model architecture and load state dict
+        _model = BangusLSTM()
+        checkpoint = torch.load(MODEL_PATH, map_location=torch.device('cpu'))
+        _model.load_state_dict(checkpoint["state_dict"])
+        _model.eval()
 
     if _scaler is None:
         if not SCALER_PATH.exists():
@@ -146,10 +151,12 @@ def prepare_sequence(logs: List[WaterLog]) -> np.ndarray:
         scaled = scaler.transform(data)
 
     sequence = scaled[-SEQ_LENGTH:]
-
     sequence = np.expand_dims(sequence, axis=0)
 
-    return sequence
+    # Convert to PyTorch tensor
+    tensor_sequence = torch.as_tensor(sequence, dtype=torch.float32)
+
+    return tensor_sequence
 
 
 # ============================================================================
@@ -173,10 +180,8 @@ def predict(logs: List[WaterLog]) -> dict:
 
     sequence = prepare_sequence(logs)
 
-    prediction_scaled = model.predict(
-        sequence,
-        verbose=0,
-    )
+    with torch.no_grad():
+        prediction_scaled = model(sequence).cpu().numpy()
 
     with warnings.catch_warnings():
         warnings.filterwarnings(

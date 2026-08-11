@@ -1,0 +1,65 @@
+{
+  "model_name": "bangus_buhai_lstm_pytorch",
+  "model_version": "pytorch-exp1",
+  "framework": "pytorch",
+  "torch_version": "2.3.1+cpu",
+  "python_version": "3.12.2",
+  "created_at_utc": "2026-08-10T09:49:25.610089+00:00",
+  "feature_columns": [
+    "Temperature",
+    "pH",
+    "Turbidity"
+  ],
+  "output_columns": [
+    "Temperature",
+    "pH",
+    "Turbidity"
+  ],
+  "datetime_column": "DateTimeStamp",
+  "seq_length": 48,
+  "forecast_horizon": 12,
+  "input_shape": [
+    48,
+    3
+  ],
+  "scaler_type": "MinMaxScaler",
+  "scaler_path": "bangus_buhai_scaler.pkl",
+  "model_path": "bangus_buhai_lstm_pytorch.pt",
+  "model_config": {
+    "input_size": 3,
+    "lstm1_units": 128,
+    "lstm2_units": 64,
+    "dense_units": 32,
+    "output_size": 3,
+    "dropout_rate": 0.2
+  },
+  "metrics": [
+    {
+      "Variable": "Temperature",
+      "MAE": 0.4822549819946289,
+      "MSE": 0.3839063346385956,
+      "RMSE": 0.6196017265319824,
+      "R2_Score": 0.9030358164561479
+    },
+    {
+      "Variable": "pH",
+      "MAE": 0.10581756383180618,
+      "MSE": 0.018560979515314102,
+      "RMSE": 0.1362386792898178,
+      "R2_Score": 0.6777632455698651
+    },
+    {
+      "Variable": "Turbidity",
+      "MAE": 2.7443902492523193,
+      "MSE": 16.212125778198242,
+      "RMSE": 4.02642822265625,
+      "R2_Score": 0.6203251918789967
+    }
+  ],
+  "best_val_loss_mse": 0.006781820579431104,
+  "epochs_trained": 28,
+  "n_rows_dataset": 44252,
+  "n_train_sequences": 35342,
+  "n_test_sequences": 8792,
+  "train_split_ratio": 0.8
+}

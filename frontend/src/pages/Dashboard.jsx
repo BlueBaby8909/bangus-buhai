@@ -7,7 +7,7 @@ import WaveDivider from "../components/WaveDivider";
 
 export default function Dashboard() {
   const [tanks, setTanks] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -24,7 +24,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadTanks();
-    api.listUsers({ limit: 100 }).then(setUsers).catch(() => {});
+    api.listDevices().then(setDevices).catch(() => {});
   }, []);
 
   const handleCreate = async (data) => {
@@ -47,7 +47,7 @@ export default function Dashboard() {
         <div>
           <div className="page-header__eyebrow">Grow-out tanks</div>
           <h1>Your ponds, at a glance</h1>
-          <p>Track water quality and feeding across every tank in one logbook.</p>
+          <p>Track water quality and ML predictions across every tank.</p>
         </div>
         <button className="btn btn-primary" onClick={() => setShowForm(true)}>
           + Add tank
@@ -60,19 +60,23 @@ export default function Dashboard() {
       {!loading && tanks.length === 0 && (
         <div className="empty-state">
           <h3>No tanks yet</h3>
-          <p>Add your first tank to start logging water readings and feedings.</p>
+          <p>Add your first tank to start logging water readings.</p>
         </div>
       )}
 
       <div className="tank-grid">
         {tanks.map((tank) => (
-          <TankCard key={tank.id} tank={tank} />
+          <TankCard 
+            key={tank.id} 
+            tank={tank} 
+            device={devices.find(d => d.tank_id === tank.id)} 
+          />
         ))}
       </div>
 
       {showForm && (
         <Modal title="Add a tank" onClose={() => setShowForm(false)}>
-          <TankForm onSubmit={handleCreate} submitting={submitting} error={error} users={users} />
+          <TankForm onSubmit={handleCreate} submitting={submitting} error={error} />
         </Modal>
       )}
     </>

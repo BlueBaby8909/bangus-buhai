@@ -40,6 +40,13 @@ def create_prediction(tank_id: int, db: Session) -> PredictionRead:
     # expects the sequence in chronological (oldest -> newest) order.
     logs.reverse()
 
+    # Calculate confidence score
+    # Apply a 20% penalty if any of the historical logs used a default/estimated pH
+    # rather than a real sensor reading.
+    confidence = 1.0
+    if any(log.ph_source != "sensor" for log in logs):
+        confidence = 0.8
+
     prediction = predict(logs)
 
     prediction_db = Prediction(
@@ -48,6 +55,7 @@ def create_prediction(tank_id: int, db: Session) -> PredictionRead:
         pH=prediction["pH"],
         turbidity=prediction["turbidity"],
         predicted_for=logs[-1].recorded_at + timedelta(hours=3),
+        confidence_score=confidence,
     )
 
     db.add(prediction_db)

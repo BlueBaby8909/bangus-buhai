@@ -1,35 +1,11 @@
-# ==========================
-# Backend Framework py= 3.12.10
-# ==========================
-fastapi==0.111.1
-uvicorn[standard]==0.30.6
-
-# ==========================
-# Database
-# ==========================
-sqlmodel==0.0.22
-
-# ==========================
-# Validation & Config
-# ==========================
-pydantic==2.9.2
-pydantic-settings==2.5.2
-python-dotenv==1.0.1
-
-# ==========================
-# Machine Learning
-# ==========================
-# keras/tensorflow/scikit-learn are pinned to match the versions the saved
-# .keras model and .pkl scaler were actually created with (see ml/inference.py).
-# keras==3.12.0 CANNOT load bangus_buhai_lstm_exp2.keras: the file was saved
-# with keras 3.15.1 and its layer initializer config (GlorotUniform with
-# input_axes/output_axes) does not exist in 3.12.x, so load_model() raises
-# TypeError. keras>=3.15.1 is required.
-tensorflow==2.20.0
-keras==3.15.1
-numpy==2.0.2
-# scikit-learn==1.6.1 can still unpickle the scaler, but it was authored with
-# sklearn 1.9.0 and raises an InconsistentVersionWarning; pinning to the
-# matching version avoids that risk entirely.
-scikit-learn==1.9.0
-joblib==1.4.2
+fastapi
+uvicorn[standard]
+sqlmodel
+pydantic-settings
+python-multipart
+numpy
+scikit-learn
+torch
+# async MQTT client — replaces the missing paho-mqtt subscriber
+aiomqtt
+# WebSocket support is included in uvicorn[standard]
