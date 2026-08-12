@@ -31,7 +31,7 @@ def view_tank(tank_id: int, db: Session = Depends(get_session)):
 
 @router.get("/{tank_id}/summary", status_code=status.HTTP_200_OK)
 def get_tank_summary(tank_id: int, db: Session = Depends(get_session)):
-    """At-a-glance view: tank info + latest water reading + latest feeding + counts."""
+    """At-a-glance view: tank info + latest water reading."""
     return dashboard_service.get_tank_summary(tank_id=tank_id, db=db)
 
 

@@ -27,7 +27,6 @@ DATABASE_URL=sqlite:///./database/bangusbuhai.db
 | Users | `POST/GET /users/`, `GET/PUT/DELETE /users/{id}` |
 | Tanks | `POST/GET /tanks/`, `GET/PUT/DELETE /tanks/{id}`, `GET /tanks/{id}/summary` |
 | Water logs | `POST/GET /tanks/{id}/logs`, `GET/PUT/DELETE /tanks/{id}/logs/{log_id}`, `GET /tanks/logs/all` |
-| Feeding logs | `POST/GET /tanks/{id}/feedings`, `GET/DELETE /tanks/{id}/feedings/{feeding_id}` |
 | Health | `GET /health` |
 
 ## Water quality status

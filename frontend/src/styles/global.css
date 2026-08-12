@@ -1,71 +1,11 @@
-@import "./tokens.css";
+@import "tailwindcss";
 
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  background-color: var(--bg-dark);
-  color: var(--text-main);
+@theme {
+  --font-inter: "Inter", sans-serif;
+  --color-brand-primary: #003fb1;
+  --color-brand-secondary: #00bc7d;
 }
 
 body {
-  font-family: var(--font-body);
-  font-size: 15px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-inter);
 }
-
-h1, h2, h3, h4 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  margin: 0;
-  color: var(--text-main);
-}
-
-h1 { font-size: 34px; letter-spacing: -0.01em; }
-h2 { font-size: 24px; letter-spacing: -0.01em; }
-h3 { font-size: 18px; }
-
-p { margin: 0; color: var(--text-muted); }
-
-a {
-  color: var(--primary);
-  text-decoration: none;
-}
-
-button {
-  font-family: inherit;
-}
-
-input, select, textarea {
-  font-family: var(--font-body);
-}
-
-/* Numeric/logbook readouts get the mono face — this is the app's signature texture */
-.mono {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-}
-
-::selection {
-  background: var(--primary-glow);
-  color: var(--text-main);
-}
-
-*:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
-}
-
