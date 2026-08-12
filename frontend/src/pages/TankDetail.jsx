@@ -37,100 +37,103 @@ export default function TankDetail() {
   };
 
   return (
-    <div className="bg-white flex flex-col min-h-screen relative pb-[100px]">
+    <div className="bg-[#f4f6f8] flex flex-col min-h-screen relative pb-[100px]">
       <AppHeader 
         title={tank.name} 
         leftNode={
           <div 
             onClick={() => navigate("/tanks")}
-            className="w-[34px] h-[34px] rounded-full flex items-center justify-center cursor-pointer ml-[-8px] hover:bg-gray-100"
+            className="w-[40px] h-[40px] rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5c666e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5c666e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
           </div>
         } 
       />
       
-      <div 
-        className="flex-1 w-full px-[16px] py-[16px] flex flex-col gap-[20px]"
-        style={{ backgroundImage: "linear-gradient(134.5deg, rgb(248, 249, 250) 8.48%, rgb(243, 244, 245) 91.51%)" }}
-      >
-        <div className="bg-white border-[1.2px] border-[#e5e7eb] rounded-[16px] drop-shadow-[0px_2px_4px_rgba(0,0,0,0.06)] p-[16px] flex items-center gap-[12px]">
-          <img src={imgImage} alt="Aquasense Pro" className="w-[40px] h-[40px] object-contain" />
-          <div className="flex flex-col flex-1">
-            <p className="font-semibold text-[#101828] text-[14px] leading-[21px]">Aquasense Pro #1</p>
-            <p className="font-normal text-[#99a1af] text-[12px] leading-[18px]">Monitoring pH · Temp · Turbidity</p>
+      <div className="flex-1 w-full px-[16px] py-[20px] flex flex-col gap-[24px]">
+        <div className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-[20px] flex items-center gap-[16px]">
+          <div className="bg-gray-50 rounded-[16px] w-[56px] h-[56px] flex items-center justify-center shadow-inner">
+            <img src={imgImage} alt="Aquasense Pro" className="w-[48px] h-[48px] object-contain" />
           </div>
-          <div className={`w-[10px] h-[10px] rounded-full ${deviceState.isOnline ? "bg-[#00bc7d]" : "bg-[#99a1af]"}`}></div>
+          <div className="flex flex-col flex-1">
+            <p className="font-bold text-[#101828] text-[16px] leading-[22px]">Aquasense Pro #1</p>
+            <p className="font-medium text-[#6b7280] text-[13px] leading-[18px] mt-[2px]">Monitoring pH · Temp · Turbidity</p>
+          </div>
+          <div className={`w-[12px] h-[12px] rounded-full shadow-sm ${deviceState.isOnline ? "bg-[#00bc7d]" : "bg-[#99a1af]"}`}></div>
         </div>
 
-        <div className="flex gap-[12px] w-full">
-          <div className="bg-[#00b4d8] flex-1 rounded-[24px] p-[20px] flex flex-col justify-between h-[176px] drop-shadow-[0px_4px_3.75px_rgba(26,86,219,0.04)]">
-            <div className="flex items-center gap-[8px]">
-              <img src={imgIconPh} alt="pH" className="w-[16px] h-[20px]" />
-              <span className="font-medium text-[15px] text-[rgba(255,255,255,0.9)]">pH</span>
+        <div className="flex gap-[16px] w-full">
+          <div className="bg-gradient-to-br from-[#00c6ff] to-[#0072ff] flex-1 rounded-[24px] p-[20px] shadow-[0_8px_24px_rgba(0,114,255,0.3)] flex flex-col justify-between h-[180px] relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-full h-full opacity-20 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent pointer-events-none"></div>
+            <div className="flex items-center gap-[8px] z-10">
+              <img src={imgIconPh} alt="pH" className="w-[16px] h-[20px] drop-shadow-sm" />
+              <span className="font-bold text-[15px] text-white">pH</span>
             </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-white text-[24px] leading-[24px]">{latest.pH}</span>
-              <span className="font-semibold text-[11px] text-[rgba(255,255,255,0.8)] tracking-[0.275px] mt-[8px]">Normal 6.5 – 7.5</span>
+            <div className="flex flex-col z-10">
+              <span className="font-bold text-white text-[32px] leading-[32px] tracking-[-1px]">{latest.pH}</span>
+              <span className="font-semibold text-[12px] text-white/80 mt-[8px]">Normal 6.5 – 7.5</span>
             </div>
           </div>
           
-          <div className="bg-[#059669] flex-1 rounded-[24px] p-[20px] flex flex-col justify-between h-[176px] drop-shadow-[0px_4px_3.75px_rgba(26,86,219,0.04)]">
-            <div className="flex items-center gap-[8px]">
-              <img src={imgIconTemp} alt="Temp" className="w-[10px] h-[20px]" />
-              <span className="font-medium text-[15px] text-[rgba(255,255,255,0.9)]">Water Temp</span>
+          <div className="bg-gradient-to-br from-[#11998e] to-[#38ef7d] flex-1 rounded-[24px] p-[20px] shadow-[0_8px_24px_rgba(56,239,125,0.3)] flex flex-col justify-between h-[180px] relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-full h-full opacity-20 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent pointer-events-none"></div>
+            <div className="flex items-center gap-[8px] z-10">
+              <img src={imgIconTemp} alt="Temp" className="w-[12px] h-[20px] drop-shadow-sm" />
+              <span className="font-bold text-[15px] text-white">Water Temp</span>
             </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-white text-[24px] leading-[24px]">{latest.temperature}°C</span>
-              <span className="font-semibold text-[11px] text-[rgba(255,255,255,0.8)] tracking-[0.275px] mt-[8px]">Optimal range 25°C – 30°C</span>
+            <div className="flex flex-col z-10">
+              <span className="font-bold text-white text-[32px] leading-[32px] tracking-[-1px]">{latest.temperature}°C</span>
+              <span className="font-semibold text-[12px] text-white/80 mt-[8px]">Optimal range 25°C – 30°C</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-[#003fb1] rounded-[24px] p-[20px] flex items-center justify-between w-full drop-shadow-[0px_4px_3.75px_rgba(26,86,219,0.08)]">
-          <div className="flex flex-col gap-[12px]">
-            <div className="flex items-center gap-[8px]">
-              <img src={imgIconTurb} alt="Turbidity" className="w-[20px] h-[17px] brightness-0 invert" />
-              <span className="font-medium text-[15px] text-[rgba(255,255,255,0.9)]">Turbidity</span>
+        <div className="bg-white rounded-[24px] p-[24px] flex items-center justify-between w-full shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+          <div className="flex flex-col gap-[16px]">
+            <div className="flex items-center gap-[10px]">
+              <div className="bg-blue-50 w-[32px] h-[32px] rounded-[10px] flex items-center justify-center">
+                <img src={imgIconTurb} alt="Turbidity" className="w-[16px] h-[13px] brightness-0" style={{ filter: 'invert(15%) sepia(87%) saturate(3015%) hue-rotate(211deg) brightness(97%) contrast(108%)' }} />
+              </div>
+              <span className="font-bold text-[16px] text-[#101828]">Turbidity</span>
             </div>
             <div className="flex flex-col">
               <div className="flex items-end gap-[6px]">
-                <span className="font-bold text-white text-[24px] leading-[24px]">{latest.turbidity}</span>
-                <span className="font-semibold text-[13px] text-[rgba(255,255,255,0.7)] pb-[2px]">NTU</span>
+                <span className="font-bold text-[#101828] text-[36px] leading-[36px] tracking-[-1px]">{latest.turbidity}</span>
+                <span className="font-semibold text-[#6b7280] text-[16px] pb-[4px]">NTU</span>
               </div>
-              <span className="font-semibold text-[11px] text-[rgba(255,255,255,0.7)] tracking-[0.275px] mt-[8px]">{"Normal < 20 NTU"}</span>
+              <span className="font-semibold text-[13px] text-[#6b7280] mt-[8px]">{"Normal < 20 NTU"}</span>
             </div>
           </div>
-          <div className="flex items-end gap-[6px] h-[40px] opacity-60">
-            <div className="bg-[rgba(255,255,255,0.7)] w-[12px] h-[18px] rounded-t-[4px]"></div>
-            <div className="bg-[rgba(255,255,255,0.7)] w-[12px] h-[30px] rounded-t-[4px]"></div>
-            <div className="bg-[rgba(255,255,255,0.7)] w-[12px] h-[48px] rounded-t-[4px]"></div>
-            <div className="bg-[rgba(255,255,255,0.7)] w-[12px] h-[15px] rounded-t-[4px]"></div>
+          <div className="flex items-end gap-[6px] h-[48px] opacity-70">
+            <div className="bg-[#e5e7eb] w-[14px] h-[20px] rounded-[4px]"></div>
+            <div className="bg-[#e5e7eb] w-[14px] h-[36px] rounded-[4px]"></div>
+            <div className="bg-[#003fb1] w-[14px] h-[48px] rounded-[4px] shadow-sm"></div>
+            <div className="bg-[#e5e7eb] w-[14px] h-[18px] rounded-[4px]"></div>
           </div>
         </div>
 
-        <div className="bg-white border-[1.2px] border-[#f3f4f6] rounded-[24px] p-[20px] flex flex-col drop-shadow-[0px_4px_3.75px_rgba(26,86,219,0.04)]">
-          <p className="font-semibold text-[#99a1af] text-[13px] tracking-[0.65px] uppercase">Relay Control</p>
+        <div className="bg-white rounded-[24px] p-[24px] flex flex-col shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+          <p className="font-bold text-[#99a1af] text-[12px] tracking-[0.8px] uppercase">Relay Control</p>
           <div className="flex items-center justify-between mt-[16px]">
             <div className="flex flex-col">
-              <p className="font-semibold text-[#1e2939] text-[15px] leading-[22px]">{tank.name} — Heater</p>
-              <p className="font-normal text-[#99a1af] text-[12px] mt-[2px]">Send command via MQTT</p>
+              <p className="font-bold text-[#101828] text-[18px] leading-[22px]">{tank.name} — Heater</p>
+              <p className="font-medium text-[#6b7280] text-[14px] mt-[4px]">Send command via MQTT</p>
             </div>
             <div 
               onClick={handleToggleRelay}
-              className={`w-[48px] h-[24px] rounded-full relative cursor-pointer ${relayIsOn ? 'bg-[#00bc7d]' : 'bg-[#e5e7eb]'}`}
+              className={`w-[56px] h-[32px] rounded-full relative cursor-pointer transition-colors duration-300 ${relayIsOn ? 'bg-[#00bc7d]' : 'bg-[#e5e7eb]'}`}
             >
               <div 
-                className={`absolute w-[20px] h-[20px] bg-white rounded-full top-[2px] transition-all shadow-[0px_1px_3px_rgba(0,0,0,0.1)] ${relayIsOn ? 'left-[26px]' : 'left-[2px]'}`}
+                className={`absolute w-[26px] h-[26px] bg-white rounded-full top-[3px] transition-all shadow-md ${relayIsOn ? 'left-[27px]' : 'left-[3px]'}`}
               ></div>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-[16px]">
-          <h3 className="font-semibold text-[#191c1d] text-[20px]">4-Hour AI Forecast</h3>
+        <div className="flex flex-col gap-[16px] mt-[8px]">
+          <h3 className="font-bold text-[#101828] text-[20px]">4-Hour AI Forecast</h3>
           <div className="grid grid-cols-2 gap-[16px]">
             {[1, 2, 3, 4].map(hr => {
               const temp = prediction[`temperature_${hr}h`];
@@ -138,20 +141,22 @@ export default function TankDetail() {
               const status = getPredictionStatus(temp, ph);
               
               return (
-                <div key={hr} className="bg-white border-[1.2px] border-[rgba(243,244,246,0.5)] rounded-[24px] p-[20px] flex flex-col items-center gap-[12px] drop-shadow-[0px_4px_3.75px_rgba(26,86,219,0.04)]">
-                  <p className="font-semibold text-[#99a1af] text-[12px] tracking-[1.2px] uppercase">+{hr} HR</p>
-                  <div className="flex flex-col gap-[8px] items-center w-full">
-                    <div className="flex items-center gap-[4px]">
-                      <img src={imgIconBlueTemp} alt="Temp" className="w-[7px] h-[14px]" />
-                      <span className="font-semibold text-[#003fb1] text-[20px]">{temp.toFixed(1)}°C</span>
+                <div key={hr} className="bg-white rounded-[24px] p-[20px] flex flex-col items-center gap-[16px] shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                  <div className="bg-blue-50 text-[#003fb1] font-bold text-[11px] tracking-[1px] uppercase px-[12px] py-[6px] rounded-full w-max">
+                    +{hr} HR
+                  </div>
+                  <div className="flex flex-col gap-[12px] items-center w-full">
+                    <div className="flex items-center gap-[6px]">
+                      <img src={imgIconBlueTemp} alt="Temp" className="w-[8px] h-[16px]" />
+                      <span className="font-bold text-[#003fb1] text-[22px] tracking-[-0.5px]">{temp.toFixed(1)}°C</span>
                     </div>
-                    <div className="flex items-center gap-[4px]">
-                      <img src={imgIconBluePh} alt="pH" className="w-[11px] h-[14px]" />
-                      <span className="font-semibold text-[#00b4d8] text-[20px]">{ph.toFixed(1)}</span>
+                    <div className="flex items-center gap-[6px]">
+                      <img src={imgIconBluePh} alt="pH" className="w-[12px] h-[16px]" />
+                      <span className="font-bold text-[#00b4d8] text-[22px] tracking-[-0.5px]">{ph.toFixed(1)}</span>
                     </div>
                   </div>
-                  <div className={`px-[16px] py-[6px] rounded-full ${status.color}`}>
-                    <span className={`font-medium text-[13px] ${status.text}`}>{status.label}</span>
+                  <div className={`px-[16px] py-[8px] rounded-full w-full flex justify-center mt-1 ${status.color}`}>
+                    <span className={`font-bold text-[13px] ${status.text}`}>{status.label}</span>
                   </div>
                 </div>
               );
