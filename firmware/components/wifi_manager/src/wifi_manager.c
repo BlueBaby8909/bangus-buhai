@@ -84,6 +84,7 @@ static volatile bool s_wifi_connected    = false;
 static uint32_t      s_reconnect_delay_ms = 1000;   /* starts at 1 s           */
 static TimerHandle_t s_reconnect_timer   = NULL;
 static bool          s_auth_failed       = false;    /* sticky across retries   */
+static bool          s_is_provisioning   = false;
 
 /* -------------------------------------------------------------------------- */
 /*  Forward declarations                                                       */
@@ -197,6 +198,7 @@ static void start_reconnect_timer(void)
 
 static void start_provisioning(void)
 {
+    s_is_provisioning = true;
     ESP_LOGI(TAG, "Starting BLE provisioning mode...");
 
     /* Build the AP name: BB-SETUP-AABBCC */
@@ -264,6 +266,7 @@ static void prov_event_handler(void *arg, esp_event_base_t event_base,
             break;
 
         case NETWORK_PROV_END:
+            s_is_provisioning = false;
             /* Release provisioning resources now that STA has connected */
             network_prov_mgr_deinit();
             ESP_LOGI(TAG, "Provisioning complete — resources released");
@@ -280,8 +283,12 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
     if (event_base == WIFI_EVENT) {
         switch (event_id) {
             case WIFI_EVENT_STA_START:
-                ESP_LOGI(TAG, "STA started, connecting...");
-                esp_wifi_connect();
+                if (!s_is_provisioning) {
+                    ESP_LOGI(TAG, "STA started, connecting...");
+                    esp_wifi_connect();
+                } else {
+                    ESP_LOGI(TAG, "STA started (provisioning mode), waiting for credentials...");
+                }
                 break;
 
             case WIFI_EVENT_STA_DISCONNECTED: {
@@ -290,6 +297,11 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
 
                 set_connected(false);
                 ESP_LOGW(TAG, "Disconnected, reason: %d", disc->reason);
+
+                if (s_is_provisioning) {
+                    ESP_LOGI(TAG, "Ignoring disconnect during provisioning");
+                    break;
+                }
 
                 /* AUTH_FAIL means stored credentials are wrong → re-provision */
                 if (disc->reason == WIFI_REASON_AUTH_FAIL ||
@@ -333,6 +345,7 @@ esp_err_t wifi_manager_init(void)
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+    ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_NONE));
 
     /* Register Wi-Fi and IP event handlers */
     ESP_ERROR_CHECK(esp_event_handler_register(

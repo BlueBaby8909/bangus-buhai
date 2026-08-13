@@ -15,7 +15,12 @@ And for each telemetry message: writes a WaterLog row, evaluates water quality,
 and pushes real-time updates to connected WebSocket clients.
 """
 
+import sys
 import asyncio
+
+if sys.platform == 'win32':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 import logging
 from contextlib import asynccontextmanager
 

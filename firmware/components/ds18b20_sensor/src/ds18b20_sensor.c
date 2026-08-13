@@ -69,7 +69,7 @@ esp_err_t ds18b20_sensor_read(float *out_temperature)
         return ret;
     }
 
-    vTaskDelay(pdMS_TO_TICKS(200));
+    vTaskDelay(pdMS_TO_TICKS(1000));
 
     ret = ds18b20_get_temperature(s_ds18b20_handle, out_temperature);
     return ret;

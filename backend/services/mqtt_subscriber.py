@@ -78,14 +78,33 @@ class MQTTSubscriber:
                 {"type": "new_reading", "water_log": water_log_read.model_dump(mode="json")}
             )
 
+            # Automatically trigger ML prediction if we have enough logs
+            from services.prediction_service import create_prediction
+            from fastapi import HTTPException
+            try:
+                # We attempt to create a prediction. If there are <48 logs, it throws a 400.
+                pred_read = create_prediction(tank_id, db)
+                # Broadcast the new prediction to the frontend!
+                await ws_manager.broadcast(
+                    tank_id,
+                    {"type": "new_prediction", "prediction": pred_read.model_dump(mode="json", default=str)}
+                )
+            except HTTPException:
+                pass
+            except Exception as e:
+                logger.error(f"Error generating prediction for tank {tank_id}: {e}")
+
     async def run(self):
+        import ssl
+        tls_context = ssl.create_default_context() if settings.mqtt_use_tls else None
+        
         # aiomqtt Client automatically handles reconnections
         async with aiomqtt.Client(
             hostname=settings.mqtt_broker_host,
             port=settings.mqtt_broker_port,
             username=settings.mqtt_username or None,
             password=settings.mqtt_password or None,
-            # tls_context=... (configured in Priority 3)
+            tls_context=tls_context
         ) as client:
             logger.info(f"Connected to MQTT broker at {settings.mqtt_broker_host}:{settings.mqtt_broker_port}")
             
@@ -108,14 +127,17 @@ class MQTTSubscriber:
                     logger.error(f"Error processing MQTT message: {e}")
 
     async def publish_relay_command(self, device_id: str, relay_on: bool):
-        topic = f"{settings.mqtt_topic_prefix}/devices/{device_id}/command/relay"
-        payload = json.dumps({"relay_on": relay_on})
+        topic = f"{settings.mqtt_topic_prefix}/devices/{device_id}/cmd"
+        payload = json.dumps({"relay": "heater", "state": relay_on})
         try:
+            import ssl
+            tls_context = ssl.create_default_context() if settings.mqtt_use_tls else None
             async with aiomqtt.Client(
                 hostname=settings.mqtt_broker_host,
                 port=settings.mqtt_broker_port,
                 username=settings.mqtt_username or None,
                 password=settings.mqtt_password or None,
+                tls_context=tls_context
             ) as client:
                 await client.publish(topic, payload, qos=1)
                 logger.info(f"Published relay command to {topic}: {payload}")

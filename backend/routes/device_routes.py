@@ -41,7 +41,7 @@ async def send_command(device_id: str, command: CommandRequest, db: Session = De
     if not device:
         raise HTTPException(status_code=404, detail="Device not found")
 
-    topic = f"{settings.mqtt_topic_prefix}/devices/{device_id}/command"
+    topic = f"{settings.mqtt_topic_prefix}/devices/{device_id}/cmd"
     payload = json.dumps({"relay": command.relay, "state": command.state})
 
     try:

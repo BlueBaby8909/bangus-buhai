@@ -324,7 +324,7 @@ static void drain_queue(void)
         char *json = build_telemetry_json(&r);
         if (json) {
             int msg_id = esp_mqtt_client_publish(
-                s_client, s_topic_telemetry, json, 0, 1 /* QoS */, 0);
+                s_client, s_topic_telemetry, json, 0, 1 /* QoS 1 */, 0);
             if (msg_id < 0) {
                 ESP_LOGW(TAG, "Drain publish failed — re-queuing");
                 ring_buf_push(&r);

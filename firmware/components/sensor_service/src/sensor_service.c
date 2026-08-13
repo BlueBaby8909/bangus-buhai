@@ -72,9 +72,10 @@ static const char *TAG = "SENSOR_SVC";
 /* ── Module state ──────────────────────────────────────────────────────────── */
 static SemaphoreHandle_t s_mutex = NULL;
 static sensor_reading_t  s_latest;
-static bool              s_has_reading      = false;
-static bool              s_ema_initialized  = false;
-static float             s_ema_temp         = 0.0f;
+static bool              s_has_reading            = false;
+static bool              s_ema_temp_initialized   = false;
+static bool              s_ema_turb_initialized   = false;
+static float             s_ema_temp               = 0.0f;
 static float             s_ema_turb         = 0.0f;
 static uint32_t          s_last_temp_ok_ms  = 0;   /* time of last good temp read */
 
@@ -116,12 +117,13 @@ esp_err_t sensor_service_read(sensor_reading_t *out)
     if (ret == ESP_OK) {
         /* Validate range before accepting */
         if (raw_temp < TEMP_MIN_VALID || raw_temp > TEMP_MAX_VALID) {
-            ESP_LOGW(TAG, "Temperature %.1f°C out of valid range [%.0f, %.0f] — clamping",
+            ESP_LOGW(TAG, "Temperature %.1f°C out of valid range [%.0f, %.0f] — rejecting",
                      raw_temp, TEMP_MIN_VALID, TEMP_MAX_VALID);
-            raw_temp = clamp(raw_temp, TEMP_MIN_VALID, TEMP_MAX_VALID);
+            temp_ok = false;
+        } else {
+            temp_ok = true;
+            s_last_temp_ok_ms = now_ms;
         }
-        temp_ok = true;
-        s_last_temp_ok_ms = now_ms;
     } else {
         ESP_LOGW(TAG, "DS18B20 read failed (%s) — using EMA hold value",
                  esp_err_to_name(ret));
@@ -136,6 +138,12 @@ esp_err_t sensor_service_read(sensor_reading_t *out)
     ret = turbidity_sensor_read(&raw_turb_mv);
     if (ret == ESP_OK) {
         float voltage = (float)raw_turb_mv / 1000.0f;   /* mV → V */
+
+        /* SOFTWARE FIX: Compensate for hardware baseline.
+         * Diagnostics show clear water outputs ~1.84V on this setup, rather
+         * than the 4.2V expected by the DFRobot polynomial. We scale it up
+         * by 2.28x (4.2 / 1.84) to perfectly align with the expected curve. */
+        voltage = voltage * 2.28f;
 
         /* Polynomial NTU conversion (DFRobot standard curve) */
         if (voltage < 2.5f) {
@@ -155,17 +163,20 @@ esp_err_t sensor_service_read(sensor_reading_t *out)
     /* ── 3. Apply EMA filter ─────────────────────────────────────────────── */
     xSemaphoreTake(s_mutex, portMAX_DELAY);
 
-    if (!s_ema_initialized) {
-        s_ema_temp = temp_ok ? raw_temp : 0.0f;
-        s_ema_turb = turb_ok ? raw_ntu  : 0.0f;
-        s_ema_initialized = true;
-    } else {
-        if (temp_ok) {
+    if (temp_ok) {
+        if (!s_ema_temp_initialized) {
+            s_ema_temp = raw_temp;
+            s_ema_temp_initialized = true;
+        } else {
             s_ema_temp = (EMA_ALPHA_TEMP * raw_temp) + ((1.0f - EMA_ALPHA_TEMP) * s_ema_temp);
         }
-        /* If temp read failed, s_ema_temp holds the last good filtered value. */
+    }
 
-        if (turb_ok) {
+    if (turb_ok) {
+        if (!s_ema_turb_initialized) {
+            s_ema_turb = raw_ntu;
+            s_ema_turb_initialized = true;
+        } else {
             s_ema_turb = (EMA_ALPHA_TURB * raw_ntu) + ((1.0f - EMA_ALPHA_TURB) * s_ema_turb);
         }
     }

@@ -101,7 +101,7 @@ ESP_EVENT_DEFINE_BASE(SYSTEM_EVENTS);
 
 #define SENSOR_INTERVAL_MS      2000
 #define CONTROL_INTERVAL_MS     5000
-#define TELEMETRY_INTERVAL_MS   (5UL * 60UL * 1000UL)   /* 5 minutes */
+#define TELEMETRY_INTERVAL_MS   (5UL * 1000UL)          /* 5 seconds */
 #define DISPLAY_INTERVAL_MS     1000
 
 /* ── Relay hysteresis thresholds ───────────────────────────────────────────── */
@@ -259,8 +259,13 @@ static void telemetry_task(void *pvParameters)
             ESP_LOGD(TAG, "[telemetry_task] No sensor reading yet — skipping");
         }
 
-        esp_task_wdt_reset();
-        vTaskDelay(pdMS_TO_TICKS(TELEMETRY_INTERVAL_MS));
+        /* Sleep in 5-second chunks to keep the 30-second watchdog happy */
+        const uint32_t chunk_ms = 5000;
+        const uint32_t chunks = TELEMETRY_INTERVAL_MS / chunk_ms;
+        for (uint32_t i = 0; i < chunks; i++) {
+            esp_task_wdt_reset();
+            vTaskDelay(pdMS_TO_TICKS(chunk_ms));
+        }
     }
 }
 

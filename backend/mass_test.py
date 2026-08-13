@@ -8,11 +8,11 @@ def check(response, expected_status, name):
     print(f"{name}: {response.status_code}", end="")
 
     if response.status_code != expected_status:
-        print(" ❌")
+        print(" FAILED")
         print(response.text)
         raise SystemExit(1)
 
-    print(" ✅")
+    print(" OK")
 
 
 # ============================================================
@@ -134,10 +134,10 @@ history = response.json()
 print(f"Predictions stored: {len(history)}")
 
 if len(history) < 1:
-    print("❌ Prediction was not persisted.")
+    print("FAILED Prediction was not persisted.")
     raise SystemExit(1)
 
-print("Prediction successfully saved to database. ✅")
+print("Prediction successfully saved to database. OK")
 
 
 # ============================================================
@@ -163,7 +163,7 @@ print(latest)
 # ============================================================
 
 print("\n" + "=" * 60)
-print("ML MASS TEST PASSED ✅")
+print("ML MASS TEST PASSED OK")
 print("=" * 60)
 print(f"Tank ID: {tank_id}")
 print("Water logs: 48")

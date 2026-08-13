@@ -60,5 +60,9 @@ esp_err_t turbidity_sensor_read(int *out_voltage)
     
     ret = adc_cali_raw_to_voltage(s_cali_handle, raw_val, out_voltage);
     
+    if (ret == ESP_OK) {
+        ESP_LOGI(TAG, "Diagnostic - ADC Raw: %d | Voltage: %d mV", raw_val, *out_voltage);
+    }
+    
     return ret;
 }

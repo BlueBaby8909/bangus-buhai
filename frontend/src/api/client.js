@@ -50,6 +50,8 @@ export const api = {
     request(`/tanks/${tankId}/logs`, { method: "POST", body: asJson(data) }),
   deleteWaterLog: (tankId, logId) =>
     request(`/tanks/${tankId}/logs/${logId}`, { method: "DELETE" }),
+  getAllLogs: (params = {}) =>
+    request(`/tanks/logs/all?${new URLSearchParams(params)}`),
 
 
   // Devices
@@ -58,7 +60,8 @@ export const api = {
   sendCommand: (id, command) => request(`/devices/${id}/command`, { method: "POST", body: asJson(command) }),
 
   // Predictions
-  getLatestPrediction: (tankId) => request(`/predictions/latest?tank_id=${tankId}`),
+  getLatestPrediction: (tankId) => request(`/tanks/${tankId}/predictions/latest`),
+  getPredictionHistory: (tankId) => request(`/tanks/${tankId}/predictions/`),
 };
 
 export const getWsUrl = (path) => {
