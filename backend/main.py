@@ -15,12 +15,7 @@ And for each telemetry message: writes a WaterLog row, evaluates water quality,
 and pushes real-time updates to connected WebSocket clients.
 """
 
-import sys
 import asyncio
-
-if sys.platform == 'win32':
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
 import logging
 from contextlib import asynccontextmanager
 
@@ -58,18 +53,15 @@ async def lifespan(app: FastAPI):
     load_resources()
     logger.info("ML model loaded")
 
-    # Start MQTT subscriber as a background task
-    mqtt_task = asyncio.create_task(mqtt_subscriber.run(), name="mqtt_subscriber")
+    # Start MQTT subscriber in a background thread
+    mqtt_subscriber.start()
     logger.info("MQTT subscriber started")
 
     yield  # Application runs here
 
     # Shutdown
-    mqtt_task.cancel()
-    try:
-        await mqtt_task
-    except asyncio.CancelledError:
-        logger.info("MQTT subscriber stopped cleanly")
+    mqtt_subscriber.stop()
+    logger.info("MQTT subscriber stopped cleanly")
 
 
 app = FastAPI(
@@ -81,6 +73,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origin_list,
+    allow_origin_regex=r"^https?://(?:localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|172\.\d+\.\d+\.\d+|10\.\d+\.\d+\.\d+)(?::\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

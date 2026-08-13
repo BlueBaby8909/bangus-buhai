@@ -1,4 +1,6 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+// Dynamically point to the same IP address the frontend is hosted on, but port 8000
+const defaultBaseUrl = `${window.location.protocol}//${window.location.hostname}:8000`;
+const BASE_URL = import.meta.env.VITE_API_URL || defaultBaseUrl;
 
 class ApiError extends Error {
   constructor(message, status, detail) {
