@@ -1,22 +1,20 @@
-# Bangus Buhai Firmware
+# Bangus Buhai ESP-IDF firmware
 
-## Wi-Fi Provisioning
+The active prototype firmware targets ESP32-S3 and uses ESP-IDF/FreeRTOS. The owner confirmed ESP-IDF and an unloaded demonstration relay on 2026-10-15. Board wiring, calibration, clean-build compatibility, and device behavior still require verification.
 
-This firmware uses **ESP-IDF Network Provisioning** to securely connect the device to your local Wi-Fi network.
+- [Product requirements](../docs/PRD.md)
+- [Build/configuration/provisioning guide](../docs/operations/development.md#firmware)
+- [Architecture and telemetry](../docs/reference/architecture.md)
+- [Device/network/relay findings](../docs/status/implementation.md)
+- [Hardware and build questions](../docs/research/open-questions.md#q06-hardware-and-build-evidence)
 
-### Provisioning via BLE
+## Source map
 
-For the prototype, we use **BLE Provisioning** (`network_prov_scheme_ble`) for provisioning to allow easy testing.
+- [main/main.c](main/main.c): sensor, control, telemetry, and display tasks; watchdog registration; startup.
+- [components/](components/): sensor drivers/service, active-low relay driver, LCD, BLE Wi-Fi provisioning, MQTT.
+- [main/Kconfig.projbuild](main/Kconfig.projbuild): board/broker/provenance configuration options.
+- [sdkconfig.defaults](sdkconfig.defaults), [partitions.csv](partitions.csv): intended target/configuration and partition baseline.
 
-#### Steps to Provision:
-1. Download the **ESP BLE Provisioning** app on your iOS or Android smartphone.
-2. Power on the device. If it has no saved Wi-Fi credentials, the LCD will display "Connecting WiFi / Please wait...".
-3. Open the ESP BLE Provisioning app and scan for devices (it should appear as `BB-SETUP-XXXXXX`).
-4. Follow the prompts to provision the device. The Proof of Possession (PoP) is the last 8 characters of the device's MAC address.
-5. Provide your local Wi-Fi SSID and password through the app.
-6. The device will connect to your Wi-Fi, store the credentials in its NVS flash memory, and begin publishing telemetry to the MQTT broker.
+Wi-Fi provisioning uses BLE in source, not SoftAP. Credentials persist in NVS. The source provides a credential-reset function, but an end-user invocation has not been verified. Broad flash erasure is not an ordinary credential-reset instruction.
 
-If you ever need to reset the credentials, you can erase the NVS flash using:
-```bash
-idf.py erase-flash
-```
+Keep `components/telemetry_service/certs/mosquitto_ca.crt`; it is embedded by the ESP-IDF build despite its historical filename. The retired Arduino implementation and self-hosted broker configuration are no longer active alternatives.

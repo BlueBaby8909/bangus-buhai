@@ -1,53 +1,22 @@
-# Bangus Buhai — Frontend
+# Bangus Buhai frontend
 
-React + Vite frontend for the Bangus Buhai pond/tank monitoring app. Pairs
-with the `backend/` FastAPI service (see the backend repo's README).
+React 19 + Vite 8 single-page application with React Router, Recharts, and Tailwind CSS. Dependency ranges are declared in [package.json](package.json), with installed versions resolved through the lockfile.
 
-## Setup
+- [Product requirements](../docs/PRD.md)
+- [Run/build/configuration instructions](../docs/operations/development.md#frontend)
+- [Architecture](../docs/reference/architecture.md)
+- [Current integration limitations](../docs/status/implementation.md#s06-browser-interface)
 
-```bash
-npm install
-cp .env.example .env   # edit VITE_API_URL if your backend isn't on localhost:8000
-npm run dev
-```
+## Current pages
 
-Runs at `http://localhost:5173` by default. Make sure the backend's
-`CORS_ORIGINS` includes that origin (it does by default — see
-`backend/config.py`).
+| Path | Source | Existing responsibility |
+|---|---|---|
+| `/` | [Dashboard](src/pages/Dashboard.jsx) | First-tank overview and per-tank socket updates |
+| `/tanks` | [Tanks](src/pages/Tanks.jsx) | Tank list and creation modal |
+| `/tanks/:id` | [TankDetail](src/pages/TankDetail.jsx) | Readings, charts, forecasts/history, relay toggle, editing/deletion |
+| `/alerts` | [Alerts](src/pages/Alerts.jsx) | On-load alert summaries from devices/readings/forecasts |
+| `/data` | [DataExport](src/pages/DataExport.jsx) | Loaded water-log table and bounded CSV export |
 
-```bash
-npm run build     # production build -> dist/
-npm run preview   # serve the production build locally
-```
+[App.jsx](src/App.jsx) defines routing. [api/client.js](src/api/client.js) wraps REST calls and constructs socket URLs. [global.css](src/styles/global.css) imports Tailwind and defines the current theme. Components use local React state; the source has no central state store.
 
-## Structure
-
-```
-src/
-  api/client.js        fetch wrapper for every backend endpoint
-  lib/waterQuality.js   client-side mirror of backend water-quality thresholds (display only)
-  components/           GaugeRing, RangeGauge, StatusBadge, Sidebar, Modal, forms, TankCard
-  pages/                Dashboard, TankDetail, Users
-  styles/               tokens.css (design system), global.css, components.css
-```
-
-## Pages
-
-- **Dashboard (`/`)** — grid of tanks with a live status gauge per card, and a
-  form to add a new tank.
-- **Tank detail (`/tanks/:id`)** — latest reading plotted on range gauges
-  (temperature / pH / turbidity, with the optimal band shaded), latest
-  feeding, and tabbed history for water logs and feedings. Lets you log new
-  readings/feedings or delete the tank.
-- **Growers (`/users`)** — list/add/remove users who tanks can be assigned to.
-
-## Design notes
-
-Palette and type are themed around a brackish milkfish pond rather than a
-generic dashboard look — deep teal sidebar, sage-paper background, clay/mud
-accent, moss-green/mud-gold/rust status colors. All numeric readouts use a
-monospace face to read like a logbook. The gauge-ring/range-gauge motif on
-cards and the tank-detail page is the app's one recurring signature element,
-modeled on the analog dial gauges used pond-side.
-
-Design tokens live in `src/styles/tokens.css` if you want to retheme.
+The old Users/feeding UI, old gauge/sidebar components, token/component stylesheets, and unused `lib/waterQuality.js` are not part of the current source. Manual water-log entry and estimated-pH presentation remain product gaps. Some device matching and thresholds are incorrect; charts/relay/forecast UI existing does not prove their integrations are correct. See the status assessment rather than treating this route map as feature acceptance.
