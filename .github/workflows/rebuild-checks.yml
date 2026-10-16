@@ -1,0 +1,54 @@
+name: Rebuild checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: windows-2025
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        shell: cmd
+
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.14.6"
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24.13.1"
+          package-manager-cache: false
+
+      - name: Set up recorded npm version
+        run: call npm install --global npm@11.8.0
+
+      - name: Show tool versions
+        run: python --version && node --version && call npm --version
+
+      - name: Create backend environment
+        run: python -m venv rebuild\backend\.venv
+
+      - name: Install backend dependencies
+        run: rebuild\backend\.venv\Scripts\python.exe -m pip install -r rebuild\backend\requirements.lock.txt
+
+      - name: Install frontend dependencies
+        working-directory: rebuild/frontend
+        run: call npm ci
+
+      - name: Run rebuild checks
+        run: call rebuild\check.cmd

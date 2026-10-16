@@ -1,0 +1,728 @@
+{
+  "context": {
+    "device_id": "BB-AABBCC112233",
+    "binding_ids": [
+      "97fcde45-4112-41d4-a509-17e5bb1c0d91"
+    ],
+    "prefix": "bangusbuhai-rebuild"
+  },
+  "cases": [
+    {
+      "id": "telemetry-default-ph",
+      "operation": "message",
+      "file": "valid/telemetry-default-ph.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "telemetry"
+    },
+    {
+      "id": "telemetry-sensor-ph",
+      "operation": "message",
+      "file": "valid/telemetry-sensor-ph.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "telemetry"
+    },
+    {
+      "id": "telemetry-unknown-sample-age",
+      "operation": "message",
+      "file": "valid/telemetry-unknown-sample-age.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "telemetry"
+    },
+    {
+      "id": "telemetry-failed-sensor",
+      "operation": "message",
+      "file": "valid/telemetry-failed-sensor.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "telemetry"
+    },
+    {
+      "id": "telemetry-stale-held-value",
+      "operation": "message",
+      "file": "valid/telemetry-stale-held-value.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "telemetry"
+    },
+    {
+      "id": "telemetry-stale-null-value",
+      "operation": "message",
+      "file": "valid/telemetry-stale-null-value.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "telemetry"
+    },
+    {
+      "id": "telemetry-missing-sensor",
+      "operation": "message",
+      "file": "valid/telemetry-missing-sensor.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "telemetry"
+    },
+    {
+      "id": "telemetry-unsynchronized-clock",
+      "operation": "message",
+      "file": "valid/telemetry-unsynchronized-clock.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "telemetry"
+    },
+    {
+      "id": "telemetry-unknown-relay-state",
+      "operation": "message",
+      "file": "valid/telemetry-unknown-relay-state.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "telemetry"
+    },
+    {
+      "id": "telemetry-safe-uptime-boundary",
+      "operation": "message",
+      "file": "valid/telemetry-safe-uptime-boundary.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "telemetry"
+    },
+    {
+      "id": "telemetry-next-event",
+      "operation": "message",
+      "file": "valid/telemetry-next-event.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "telemetry"
+    },
+    {
+      "id": "telemetry-backfill",
+      "operation": "message",
+      "file": "valid/telemetry-backfill.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "telemetry"
+    },
+    {
+      "id": "status-online",
+      "operation": "message",
+      "file": "valid/status-online.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/status",
+      "expected_result": "status"
+    },
+    {
+      "id": "status-offline",
+      "operation": "message",
+      "file": "valid/status-offline.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/status",
+      "expected_result": "status"
+    },
+    {
+      "id": "command-relay-on",
+      "operation": "message",
+      "file": "valid/command-relay-on.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd",
+      "expected_result": "command"
+    },
+    {
+      "id": "command-relay-off",
+      "operation": "message",
+      "file": "valid/command-relay-off.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd",
+      "expected_result": "command"
+    },
+    {
+      "id": "result-accepted",
+      "operation": "message",
+      "file": "valid/result-accepted.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/command-results",
+      "expected_result": "command_result"
+    },
+    {
+      "id": "result-applied",
+      "operation": "message",
+      "file": "valid/result-applied.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/command-results",
+      "expected_result": "command_result"
+    },
+    {
+      "id": "result-late-applied",
+      "operation": "message",
+      "file": "valid/result-late-applied.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/command-results",
+      "expected_result": "command_result"
+    },
+    {
+      "id": "result-rejected",
+      "operation": "message",
+      "file": "valid/result-rejected.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/command-results",
+      "expected_result": "command_result"
+    },
+    {
+      "id": "result-failed",
+      "operation": "message",
+      "file": "valid/result-failed.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/command-results",
+      "expected_result": "command_result"
+    },
+    {
+      "id": "ack-stored-telemetry",
+      "operation": "message",
+      "file": "valid/ack-stored-telemetry.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/acks",
+      "expected_result": "ack"
+    },
+    {
+      "id": "ack-duplicate-telemetry",
+      "operation": "message",
+      "file": "valid/ack-duplicate-telemetry.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/acks",
+      "expected_result": "ack"
+    },
+    {
+      "id": "ack-stored-result",
+      "operation": "message",
+      "file": "valid/ack-stored-result.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/acks",
+      "expected_result": "ack"
+    },
+    {
+      "id": "wrong-temperature-unit",
+      "operation": "message",
+      "file": "invalid/wrong-temperature-unit.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "numeric-string",
+      "operation": "message",
+      "file": "invalid/numeric-string.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "boolean-measurement",
+      "operation": "message",
+      "file": "invalid/boolean-measurement.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "invalid-with-number",
+      "operation": "message",
+      "file": "invalid/invalid-with-number.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "default-ph-claims-valid",
+      "operation": "message",
+      "file": "invalid/default-ph-claims-valid.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "default-ph-claims-sample",
+      "operation": "message",
+      "file": "invalid/default-ph-claims-sample.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "manual-device-source",
+      "operation": "message",
+      "file": "invalid/manual-device-source.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "estimated-device-source",
+      "operation": "message",
+      "file": "invalid/estimated-device-source.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "unknown-age-claims-valid",
+      "operation": "message",
+      "file": "invalid/unknown-age-claims-valid.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "temperature-at-stale-boundary",
+      "operation": "message",
+      "file": "invalid/temperature-at-stale-boundary.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "temperature-both-ages-stale",
+      "operation": "message",
+      "file": "invalid/temperature-both-ages-stale.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "age-exceeds-uptime",
+      "operation": "message",
+      "file": "invalid/age-exceeds-uptime.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "negative-age",
+      "operation": "message",
+      "file": "invalid/negative-age.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "boolean-sequence",
+      "operation": "message",
+      "file": "invalid/boolean-sequence.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "floating-sequence",
+      "operation": "message",
+      "file": "invalid/floating-sequence.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "sequence-overflow",
+      "operation": "message",
+      "file": "invalid/sequence-overflow.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "uptime-overflow",
+      "operation": "message",
+      "file": "invalid/uptime-overflow.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "boolean-diagnostic",
+      "operation": "message",
+      "file": "invalid/boolean-diagnostic.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "string-relay-state",
+      "operation": "message",
+      "file": "invalid/string-relay-state.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "wrong-relay-mode",
+      "operation": "message",
+      "file": "invalid/wrong-relay-mode.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "unsafe-reason",
+      "operation": "message",
+      "file": "invalid/unsafe-reason.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "long-firmware-version",
+      "operation": "message",
+      "file": "invalid/long-firmware-version.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "missing-synchronized-time",
+      "operation": "message",
+      "file": "invalid/missing-synchronized-time.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "unsynchronized-with-time",
+      "operation": "message",
+      "file": "invalid/unsynchronized-with-time.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "timestamp-with-offset",
+      "operation": "message",
+      "file": "invalid/timestamp-with-offset.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "impossible-date",
+      "operation": "message",
+      "file": "invalid/impossible-date.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "uppercase-uuid",
+      "operation": "message",
+      "file": "invalid/uppercase-uuid.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "unknown-binding",
+      "operation": "message",
+      "file": "invalid/unknown-binding.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "binding_mismatch"
+    },
+    {
+      "id": "payload-device-mismatch",
+      "operation": "message",
+      "file": "invalid/payload-device-mismatch.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "identity_mismatch"
+    },
+    {
+      "id": "unsupported-version",
+      "operation": "message",
+      "file": "invalid/unsupported-version.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "unsupported_version"
+    },
+    {
+      "id": "boolean-version",
+      "operation": "message",
+      "file": "invalid/boolean-version.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "unsupported_version"
+    },
+    {
+      "id": "string-version",
+      "operation": "message",
+      "file": "invalid/string-version.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "unsupported_version"
+    },
+    {
+      "id": "missing-version",
+      "operation": "message",
+      "file": "invalid/missing-version.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "missing-age-field",
+      "operation": "message",
+      "file": "invalid/missing-age-field.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "extra-field",
+      "operation": "message",
+      "file": "invalid/extra-field.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "topic-device-mismatch",
+      "operation": "message",
+      "file": "invalid/topic-device-mismatch.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-112233445566/telemetry",
+      "expected_error": "identity_mismatch"
+    },
+    {
+      "id": "legacy-prefix",
+      "operation": "message",
+      "file": "invalid/legacy-prefix.json",
+      "topic": "bangusbuhai/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_topic"
+    },
+    {
+      "id": "unknown-suffix",
+      "operation": "message",
+      "file": "invalid/unknown-suffix.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/command",
+      "expected_error": "invalid_topic"
+    },
+    {
+      "id": "no-allowed-binding",
+      "operation": "message",
+      "file": "invalid/no-allowed-binding.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "binding_mismatch",
+      "context": {
+        "device_id": "BB-AABBCC112233",
+        "binding_ids": [],
+        "prefix": "bangusbuhai-rebuild"
+      }
+    },
+    {
+      "id": "command-empty-lifetime",
+      "operation": "message",
+      "file": "invalid/command-empty-lifetime.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "applied-with-unknown-state",
+      "operation": "message",
+      "file": "invalid/applied-with-unknown-state.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/command-results",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "malformed-json",
+      "operation": "message",
+      "file": "invalid/malformed-json.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_json"
+    },
+    {
+      "id": "invalid-utf8",
+      "operation": "message",
+      "file": "invalid/invalid-utf8.bin",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_json"
+    },
+    {
+      "id": "top-level-array",
+      "operation": "message",
+      "file": "invalid/top-level-array.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_schema"
+    },
+    {
+      "id": "duplicate-key",
+      "operation": "message",
+      "file": "invalid/duplicate-key.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "duplicate_key"
+    },
+    {
+      "id": "escaped-duplicate-key",
+      "operation": "message",
+      "file": "invalid/escaped-duplicate-key.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "duplicate_key"
+    },
+    {
+      "id": "nan",
+      "operation": "message",
+      "file": "invalid/nan.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_number"
+    },
+    {
+      "id": "infinity",
+      "operation": "message",
+      "file": "invalid/infinity.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_number"
+    },
+    {
+      "id": "number-overflow",
+      "operation": "message",
+      "file": "invalid/number-overflow.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_number"
+    },
+    {
+      "id": "number-underflow",
+      "operation": "message",
+      "file": "invalid/number-underflow.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "invalid_number"
+    },
+    {
+      "id": "too-deep",
+      "operation": "message",
+      "file": "invalid/too-deep.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "nesting_too_deep"
+    },
+    {
+      "id": "payload-exact-limit",
+      "operation": "message",
+      "file": "valid/payload-exact-limit.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "telemetry"
+    },
+    {
+      "id": "payload-over-limit",
+      "operation": "message",
+      "file": "invalid/payload-over-limit.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "payload_too_large"
+    },
+    {
+      "id": "identical-retry",
+      "operation": "retry",
+      "file": "valid/telemetry-default-ph.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "reference": "valid/telemetry-default-ph.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "duplicate"
+    },
+    {
+      "id": "reordered-retry",
+      "operation": "retry",
+      "file": "valid/telemetry-reordered.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "reference": "valid/telemetry-default-ph.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "duplicate"
+    },
+    {
+      "id": "new-event",
+      "operation": "retry",
+      "file": "valid/telemetry-next-event.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "reference": "valid/telemetry-default-ph.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "new"
+    },
+    {
+      "id": "older-backfill-is-new",
+      "operation": "retry",
+      "file": "valid/telemetry-backfill.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "reference": "valid/telemetry-default-ph.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_result": "new"
+    },
+    {
+      "id": "diagnostics-conflict",
+      "operation": "retry",
+      "file": "invalid/retry-changed-diagnostics.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "reference": "valid/telemetry-default-ph.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "event_conflict"
+    },
+    {
+      "id": "age-reset-conflict",
+      "operation": "retry",
+      "file": "invalid/retry-reset-age.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "reference": "valid/telemetry-default-ph.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "event_conflict"
+    },
+    {
+      "id": "cross-kind-sequence-conflict",
+      "operation": "retry",
+      "file": "invalid/retry-cross-kind.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/command-results",
+      "reference": "valid/telemetry-default-ph.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "event_conflict"
+    },
+    {
+      "id": "deliver-at-issue",
+      "operation": "delivery",
+      "file": "valid/command-relay-on.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd",
+      "now": "2026-10-16T03:00:00Z",
+      "clock_synchronized": true
+    },
+    {
+      "id": "deliver-before-expiry",
+      "operation": "delivery",
+      "file": "valid/command-relay-on.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd",
+      "now": "2026-10-16T03:00:59.999999Z",
+      "clock_synchronized": true
+    },
+    {
+      "id": "deliver-at-expiry",
+      "operation": "delivery",
+      "file": "valid/command-relay-on.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd",
+      "now": "2026-10-16T03:01:00Z",
+      "clock_synchronized": true,
+      "expected_error": "command_expired"
+    },
+    {
+      "id": "deliver-before-issue",
+      "operation": "delivery",
+      "file": "valid/command-relay-on.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd",
+      "now": "2026-10-16T02:59:59Z",
+      "clock_synchronized": true,
+      "expected_error": "command_not_yet_valid"
+    },
+    {
+      "id": "deliver-without-clock",
+      "operation": "delivery",
+      "file": "valid/command-relay-on.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd",
+      "now": null,
+      "clock_synchronized": false,
+      "expected_error": "clock_unsynchronized"
+    },
+    {
+      "id": "accepted-is-not-applied",
+      "operation": "result",
+      "file": "valid/result-accepted.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/command-results",
+      "reference": "valid/command-relay-on.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd"
+    },
+    {
+      "id": "applied-state-matches",
+      "operation": "result",
+      "file": "valid/result-applied.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/command-results",
+      "reference": "valid/command-relay-on.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd"
+    },
+    {
+      "id": "late-result-is-auditable",
+      "operation": "result",
+      "file": "valid/result-late-applied.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/command-results",
+      "reference": "valid/command-relay-on.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd"
+    },
+    {
+      "id": "applied-state-mismatch",
+      "operation": "result",
+      "file": "invalid/result-wrong-state.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/command-results",
+      "reference": "valid/command-relay-on.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd",
+      "expected_error": "correlation_mismatch"
+    },
+    {
+      "id": "result-command-mismatch",
+      "operation": "result",
+      "file": "invalid/result-wrong-command.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/command-results",
+      "reference": "valid/command-relay-on.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd",
+      "expected_error": "correlation_mismatch"
+    },
+    {
+      "id": "ack-telemetry-correlation",
+      "operation": "ack",
+      "file": "valid/ack-stored-telemetry.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/acks",
+      "reference": "valid/telemetry-default-ph.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry"
+    },
+    {
+      "id": "ack-result-correlation",
+      "operation": "ack",
+      "file": "valid/ack-stored-result.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/acks",
+      "reference": "valid/result-applied.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/command-results"
+    },
+    {
+      "id": "ack-kind-mismatch",
+      "operation": "ack",
+      "file": "invalid/ack-wrong-kind.json",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/acks",
+      "reference": "valid/telemetry-default-ph.json",
+      "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
+      "expected_error": "correlation_mismatch"
+    }
+  ]
+}

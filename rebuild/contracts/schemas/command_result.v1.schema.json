@@ -1,0 +1,118 @@
+{
+  "$id": "urn:bangusbuhai:device:v1:command_result",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "binding_id": {
+      "maxLength": 36,
+      "minLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "title": "Binding Id",
+      "type": "string"
+    },
+    "boot_id": {
+      "maxLength": 36,
+      "minLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "title": "Boot Id",
+      "type": "string"
+    },
+    "capture_uptime_ms": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "title": "Capture Uptime Ms",
+      "type": "integer"
+    },
+    "command_id": {
+      "maxLength": 36,
+      "minLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "title": "Command Id",
+      "type": "string"
+    },
+    "created_at": {
+      "anyOf": [
+        {
+          "maxLength": 27,
+          "minLength": 20,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Created At"
+    },
+    "device_id": {
+      "maxLength": 15,
+      "minLength": 15,
+      "pattern": "^BB-[0-9A-F]{12}$",
+      "title": "Device Id",
+      "type": "string"
+    },
+    "observed_on": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Observed On"
+    },
+    "reason": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "title": "Reason",
+      "type": "string"
+    },
+    "result": {
+      "enum": [
+        "accepted",
+        "applied",
+        "rejected",
+        "failed"
+      ],
+      "title": "Result",
+      "type": "string"
+    },
+    "schema_version": {
+      "maximum": 1,
+      "minimum": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "seq": {
+      "maximum": 4294967295,
+      "minimum": 0,
+      "title": "Seq",
+      "type": "integer"
+    },
+    "time_quality": {
+      "enum": [
+        "synchronized",
+        "unsynchronized"
+      ],
+      "title": "Time Quality",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "device_id",
+    "binding_id",
+    "boot_id",
+    "seq",
+    "capture_uptime_ms",
+    "time_quality",
+    "command_id",
+    "created_at",
+    "result",
+    "reason",
+    "observed_on"
+  ],
+  "title": "CommandResult",
+  "type": "object"
+}

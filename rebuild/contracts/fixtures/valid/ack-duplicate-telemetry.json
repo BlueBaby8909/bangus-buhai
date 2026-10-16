@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "device_id": "BB-AABBCC112233",
+  "boot_id": "2cfaa1ad-48c9-46f3-bd8e-5ebf68790dd1",
+  "seq": 7,
+  "event_kind": "telemetry",
+  "result": "duplicate"
+}

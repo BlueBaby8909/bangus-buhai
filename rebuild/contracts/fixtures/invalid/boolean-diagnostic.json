@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "device_id": "BB-AABBCC112233",
+  "binding_id": "97fcde45-4112-41d4-a509-17e5bb1c0d91",
+  "boot_id": "2cfaa1ad-48c9-46f3-bd8e-5ebf68790dd1",
+  "seq": 7,
+  "fw_version": "rebuild-example",
+  "measured_at": "2026-10-16T03:00:00Z",
+  "time_quality": "synchronized",
+  "capture_uptime_ms": 300000,
+  "readings": {
+    "temperature": {
+      "value": 28.0,
+      "unit": "degC",
+      "source": "sensor",
+      "validity": "valid",
+      "sample_age_ms": 1000,
+      "last_valid_age_ms": 1000
+    },
+    "turbidity": {
+      "value": 14.0,
+      "unit": "NTU",
+      "source": "sensor",
+      "validity": "valid",
+      "sample_age_ms": 2000,
+      "last_valid_age_ms": 2000
+    },
+    "ph": {
+      "value": 7.0,
+      "unit": "pH",
+      "source": "default",
+      "validity": "unverified",
+      "sample_age_ms": null,
+      "last_valid_age_ms": null
+    }
+  },
+  "relay": {
+    "on": false,
+    "mode": "demo",
+    "reason": "startup"
+  },
+  "diagnostics": {
+    "queue_dropped": false,
+    "reconnects": 0
+  }
+}

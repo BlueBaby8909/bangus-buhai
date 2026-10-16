@@ -1,0 +1,401 @@
+{
+  "$defs": {
+    "Diagnostics": {
+      "additionalProperties": false,
+      "properties": {
+        "queue_dropped": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Queue Dropped",
+          "type": "integer"
+        },
+        "reconnects": {
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Reconnects",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "queue_dropped",
+        "reconnects"
+      ],
+      "title": "Diagnostics",
+      "type": "object"
+    },
+    "PhReading": {
+      "additionalProperties": false,
+      "properties": {
+        "last_valid_age_ms": {
+          "anyOf": [
+            {
+              "maximum": 9007199254740991,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Valid Age Ms"
+        },
+        "sample_age_ms": {
+          "anyOf": [
+            {
+              "maximum": 9007199254740991,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sample Age Ms"
+        },
+        "source": {
+          "enum": [
+            "sensor",
+            "default"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "unit": {
+          "const": "pH",
+          "title": "Unit",
+          "type": "string"
+        },
+        "validity": {
+          "enum": [
+            "valid",
+            "invalid",
+            "stale",
+            "missing",
+            "unverified"
+          ],
+          "title": "Validity",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value",
+        "source",
+        "validity",
+        "sample_age_ms",
+        "last_valid_age_ms",
+        "unit"
+      ],
+      "title": "PhReading",
+      "type": "object"
+    },
+    "Readings": {
+      "additionalProperties": false,
+      "properties": {
+        "ph": {
+          "$ref": "#/$defs/PhReading"
+        },
+        "temperature": {
+          "$ref": "#/$defs/TemperatureReading"
+        },
+        "turbidity": {
+          "$ref": "#/$defs/TurbidityReading"
+        }
+      },
+      "required": [
+        "temperature",
+        "turbidity",
+        "ph"
+      ],
+      "title": "Readings",
+      "type": "object"
+    },
+    "RelaySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "demo",
+          "title": "Mode",
+          "type": "string"
+        },
+        "on": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "On"
+        },
+        "reason": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "on",
+        "mode",
+        "reason"
+      ],
+      "title": "RelaySnapshot",
+      "type": "object"
+    },
+    "TemperatureReading": {
+      "additionalProperties": false,
+      "properties": {
+        "last_valid_age_ms": {
+          "anyOf": [
+            {
+              "maximum": 9007199254740991,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Valid Age Ms"
+        },
+        "sample_age_ms": {
+          "anyOf": [
+            {
+              "maximum": 9007199254740991,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sample Age Ms"
+        },
+        "source": {
+          "const": "sensor",
+          "title": "Source",
+          "type": "string"
+        },
+        "unit": {
+          "const": "degC",
+          "title": "Unit",
+          "type": "string"
+        },
+        "validity": {
+          "enum": [
+            "valid",
+            "invalid",
+            "stale",
+            "missing",
+            "unverified"
+          ],
+          "title": "Validity",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value",
+        "source",
+        "validity",
+        "sample_age_ms",
+        "last_valid_age_ms",
+        "unit"
+      ],
+      "title": "TemperatureReading",
+      "type": "object"
+    },
+    "TurbidityReading": {
+      "additionalProperties": false,
+      "properties": {
+        "last_valid_age_ms": {
+          "anyOf": [
+            {
+              "maximum": 9007199254740991,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Valid Age Ms"
+        },
+        "sample_age_ms": {
+          "anyOf": [
+            {
+              "maximum": 9007199254740991,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sample Age Ms"
+        },
+        "source": {
+          "const": "sensor",
+          "title": "Source",
+          "type": "string"
+        },
+        "unit": {
+          "const": "NTU",
+          "title": "Unit",
+          "type": "string"
+        },
+        "validity": {
+          "enum": [
+            "valid",
+            "invalid",
+            "stale",
+            "missing",
+            "unverified"
+          ],
+          "title": "Validity",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value",
+        "source",
+        "validity",
+        "sample_age_ms",
+        "last_valid_age_ms",
+        "unit"
+      ],
+      "title": "TurbidityReading",
+      "type": "object"
+    }
+  },
+  "$id": "urn:bangusbuhai:device:v1:telemetry",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "binding_id": {
+      "maxLength": 36,
+      "minLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "title": "Binding Id",
+      "type": "string"
+    },
+    "boot_id": {
+      "maxLength": 36,
+      "minLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "title": "Boot Id",
+      "type": "string"
+    },
+    "capture_uptime_ms": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "title": "Capture Uptime Ms",
+      "type": "integer"
+    },
+    "device_id": {
+      "maxLength": 15,
+      "minLength": 15,
+      "pattern": "^BB-[0-9A-F]{12}$",
+      "title": "Device Id",
+      "type": "string"
+    },
+    "diagnostics": {
+      "$ref": "#/$defs/Diagnostics"
+    },
+    "fw_version": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Fw Version",
+      "type": "string"
+    },
+    "measured_at": {
+      "anyOf": [
+        {
+          "maxLength": 27,
+          "minLength": 20,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Measured At"
+    },
+    "readings": {
+      "$ref": "#/$defs/Readings"
+    },
+    "relay": {
+      "$ref": "#/$defs/RelaySnapshot"
+    },
+    "schema_version": {
+      "maximum": 1,
+      "minimum": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "seq": {
+      "maximum": 4294967295,
+      "minimum": 0,
+      "title": "Seq",
+      "type": "integer"
+    },
+    "time_quality": {
+      "enum": [
+        "synchronized",
+        "unsynchronized"
+      ],
+      "title": "Time Quality",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "device_id",
+    "binding_id",
+    "boot_id",
+    "seq",
+    "capture_uptime_ms",
+    "time_quality",
+    "fw_version",
+    "measured_at",
+    "readings",
+    "relay",
+    "diagnostics"
+  ],
+  "title": "Telemetry",
+  "type": "object"
+}

@@ -1,0 +1,67 @@
+{
+  "$id": "urn:bangusbuhai:device:v1:command",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "binding_id": {
+      "maxLength": 36,
+      "minLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "title": "Binding Id",
+      "type": "string"
+    },
+    "command_id": {
+      "maxLength": 36,
+      "minLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "title": "Command Id",
+      "type": "string"
+    },
+    "desired_on": {
+      "title": "Desired On",
+      "type": "boolean"
+    },
+    "device_id": {
+      "maxLength": 15,
+      "minLength": 15,
+      "pattern": "^BB-[0-9A-F]{12}$",
+      "title": "Device Id",
+      "type": "string"
+    },
+    "expires_at": {
+      "maxLength": 27,
+      "minLength": 20,
+      "title": "Expires At",
+      "type": "string"
+    },
+    "issued_at": {
+      "maxLength": 27,
+      "minLength": 20,
+      "title": "Issued At",
+      "type": "string"
+    },
+    "schema_version": {
+      "maximum": 1,
+      "minimum": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "type": {
+      "const": "relay.set",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "device_id",
+    "binding_id",
+    "command_id",
+    "type",
+    "desired_on",
+    "issued_at",
+    "expires_at"
+  ],
+  "title": "RelayCommand",
+  "type": "object"
+}
