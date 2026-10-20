@@ -51,10 +51,10 @@ export default function EditTankModal({ tank, onClose, onSuccess }) {
   };
 
   return (
-    <ModalFrame onClose={onClose} label="Sample tank settings">
+    <ModalFrame onClose={onClose} label="Tank settings">
       <div className="bg-white rounded-[24px] shadow-[0_8px_32px_rgba(15,23,42,0.1)] w-full max-w-md p-[24px] md:p-[32px] transform transition-all">
         <div className="flex justify-between items-center mb-[24px]">
-          <h2 className="text-[20px] md:text-[24px] font-bold text-slate-900">Sample Tank Settings</h2>
+          <h2 className="text-[20px] md:text-[24px] font-bold text-slate-900">Tank Settings</h2>
           <button aria-label="Close dialog" onClick={onClose} disabled={loading} className="w-[32px] h-[32px] rounded-full bg-slate-50 flex items-center justify-center hover:bg-slate-100 transition-colors disabled:opacity-50">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M13 1L1 13M1 1L13 13" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -95,7 +95,7 @@ export default function EditTankModal({ tank, onClose, onSuccess }) {
             disabled={loading}
             className="mt-[8px] w-full py-[14px] bg-slate-900 hover:bg-slate-800 text-white rounded-[16px] font-bold text-[15px] shadow-sm transition-colors disabled:opacity-70"
           >
-            {loading ? "Saving..." : "Save Sample Changes"}
+            {loading ? "Saving..." : "Save Changes"}
           </button>
         </form>
 
@@ -103,7 +103,7 @@ export default function EditTankModal({ tank, onClose, onSuccess }) {
           <div className="flex flex-col gap-[12px]">
             <div>
               <h3 className="font-bold text-slate-900 text-[15px]">Danger Zone</h3>
-              <p className="text-slate-500 text-[13px] mt-[2px]">Removes this sample tank from this preview session only. Restore samples brings it back; no real data is deleted.</p>
+              <p className="text-slate-500 text-[13px] mt-[2px]">Remove this tank from your workspace.</p>
             </div>
             
             {showConfirmDelete ? (

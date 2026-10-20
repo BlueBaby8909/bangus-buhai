@@ -29,7 +29,7 @@ export default function App() {
       <BottomNav />
       <main id="main-content" ref={mainRef} tabIndex={-1} className="flex-1 min-w-0 w-full md:pl-[240px]">
         <div className="max-w-7xl mx-auto w-full h-full">
-          {getDataMode()==='sample' && <PreviewToolbar scenario={scenario} onChange={setScenario}
+          {getDataMode()==='sample' && new URLSearchParams(location.search).get('tools')==='1' && <PreviewToolbar scenario={scenario} onChange={setScenario}
             onReset={()=>{mainRef.current?.focus();resetSamples()}} />}
           <Suspense fallback={<p role="status" className="p-10 text-slate-600">Loading…</p>}>
           <Routes key={`${scenario}:${getResetKey()}`}>

@@ -29,12 +29,12 @@ export default function PredictionHistoryModal({ tankId, onClose }) {
   }, [tankId]);
 
   return (
-    <ModalFrame onClose={onClose} label="Sample prediction history">
+    <ModalFrame onClose={onClose} label="Forecast history">
       <div className="bg-white rounded-[24px] shadow-[0_8px_32px_rgba(15,23,42,0.1)] w-full max-w-2xl h-[80vh] flex flex-col transform transition-all">
         <div className="flex justify-between items-center p-[24px] border-b border-slate-100">
           <div>
-            <h2 className="text-[20px] font-bold text-slate-900">AI Prediction History · Sample</h2>
-            <p className="text-slate-500 text-[14px]">Fictional forecasts for layout review. Estimated pH is not measured. These are not model outputs.</p>
+            <h2 className="text-[20px] font-bold text-slate-900">Forecast History</h2>
+            <p className="text-slate-500 text-[14px]">Estimated pH is not physically measured.</p>
           </div>
           <button aria-label="Close dialog" onClick={onClose} className="w-[32px] h-[32px] rounded-full bg-slate-50 flex items-center justify-center hover:bg-slate-100 transition-colors">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -46,7 +46,7 @@ export default function PredictionHistoryModal({ tankId, onClose }) {
         <div className="flex-1 overflow-y-auto p-[24px]">
           {loading ? (
             <div className="flex items-center justify-center h-full">
-              <div role="status" aria-label="Loading sample data" className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+              <div role="status" aria-label="Loading data" className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
           ) : error ? (
             <div className="flex items-center justify-center h-full text-red-500 font-medium">

@@ -67,17 +67,17 @@ export default function Alerts() {
         </div>
 
         <div className="flex flex-col gap-[16px] md:gap-[24px]">
-          <h3 className="font-bold text-slate-900 text-[18px] md:text-[24px]">Sample Alerts</h3>
+          <h3 className="font-bold text-slate-900 text-[18px] md:text-[24px]">Recent Alerts</h3>
           
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-[16px] md:gap-[24px]">
             {loading ? (
               <div className="col-span-full py-10 flex justify-center">
-                <div role="status" aria-label="Loading sample data" className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+                <div role="status" aria-label="Loading data" className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
               </div>
             ) : error ? (
               <p role="alert" className="col-span-full text-red-700">{error}</p>
             ) : alerts.length === 0 ? (
-              <div className="col-span-full py-10 text-center text-slate-500">No sample alerts are available. This does not establish real system status.</div>
+              <div className="col-span-full py-10 text-center text-slate-500">No alerts to display.</div>
             ) : (
               alerts.map(alert => (
                 <div key={alert.id} className="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] hover:shadow-[0_8px_30px_rgba(15,23,42,0.06)] transition-shadow flex flex-col p-[20px] md:p-[24px]">

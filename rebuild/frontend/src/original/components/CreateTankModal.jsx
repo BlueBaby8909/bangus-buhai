@@ -38,10 +38,10 @@ export default function CreateTankModal({ onClose, onSuccess }) {
   };
 
   return (
-    <ModalFrame onClose={onClose} label="Add sample tank">
+    <ModalFrame onClose={onClose} label="Add tank">
       <div className="bg-white rounded-[24px] shadow-[0_8px_32px_rgba(15,23,42,0.1)] w-full max-w-md p-[24px] md:p-[32px] transform transition-all">
         <div className="flex justify-between items-center mb-[24px]">
-          <h2 className="text-[20px] md:text-[24px] font-bold text-slate-900">Add New Sample Tank</h2>
+          <h2 className="text-[20px] md:text-[24px] font-bold text-slate-900">Add New Tank</h2>
           <button aria-label="Close dialog" onClick={onClose} className="w-[32px] h-[32px] rounded-full bg-slate-50 flex items-center justify-center hover:bg-slate-100 transition-colors">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M13 1L1 13M1 1L13 13" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -105,7 +105,7 @@ export default function CreateTankModal({ onClose, onSuccess }) {
             disabled={loading}
             className="mt-[8px] w-full py-[14px] bg-sky-500 hover:bg-sky-600 text-white rounded-[16px] font-bold text-[15px] shadow-[0_4px_12px_rgba(14,165,233,0.3)] transition-all disabled:opacity-70 disabled:hover:bg-sky-500"
           >
-            {loading ? "Creating..." : "Create Sample Tank"}
+            {loading ? "Creating..." : "Create Tank"}
           </button>
         </form>
       </div>

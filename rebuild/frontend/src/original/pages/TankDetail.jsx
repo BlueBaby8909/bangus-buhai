@@ -47,7 +47,7 @@ export default function TankDetail() {
       setHistory(logsResponse.slice().reverse());
       setError(null);
     } catch (error) {
-      setError(error.message || "Failed to load sample tank details.");
+      setError(error.message || "Unable to load tank details.");
     } finally {
       setLoading(false);
     }
@@ -63,19 +63,19 @@ export default function TankDetail() {
     setRelayIsOn(newState); // Optimistic UI
     try {
       await api.sendCommand(device.id, { relay: "demo", state: newState });
-      setControlNotice(`Sample relay ${newState ? "ON" : "OFF"}. Local preview only; no device command was sent.`);
+      setControlNotice("Relay control is not connected.");
     } catch {
       setRelayIsOn(!newState); // Revert on failure
       alert("Failed to send command to device.");
     }
   };
 
-  const getPredictionStatus = () => ({ label: "Sample only", color: "bg-slate-100", text: "text-slate-600" });
+  const getPredictionStatus = () => ({ label: "Forecast", color: "bg-slate-100", text: "text-slate-600" });
 
   if (loading) {
     return (
       <div className="bg-slate-50 flex flex-col min-h-screen items-center justify-center">
-        <div role="status" aria-label="Loading sample data" className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+        <div role="status" aria-label="Loading data" className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -141,7 +141,7 @@ export default function TankDetail() {
           </div>
           <div className="flex flex-col flex-1">
             <p className="font-bold text-slate-900 text-[16px] md:text-[20px] leading-[22px] md:leading-[26px]">{device?.name}</p>
-            <p className="font-medium text-slate-500 text-[13px] md:text-[15px] leading-[18px] md:leading-[22px] mt-[2px] md:mt-[4px]">Sample pH (not measured) · Temp · Turbidity<span className="block mt-1 font-semibold text-slate-700">{device?.connection_state === "unknown" ? "Device status unknown" : device?.is_online ? "Sample device online" : "Sample device offline"}</span></p>
+            <p className="font-medium text-slate-500 text-[13px] md:text-[15px] leading-[18px] md:leading-[22px] mt-[2px] md:mt-[4px]">pH · Temperature · Turbidity<span className="block mt-1 font-semibold text-slate-700">{device?.connection_state === "unknown" ? "Device status unknown" : device?.is_online ? "Device online" : "Device offline"}</span></p>
           </div>
           <div className={`w-[12px] h-[12px] md:w-[16px] md:h-[16px] rounded-full shadow-sm ${device?.is_online ? "bg-sky-500" : "bg-slate-400"}`}></div>
         </div>
@@ -177,7 +177,7 @@ export default function TankDetail() {
                 </div>
                 <div className="flex flex-col z-10">
                   <span className="font-bold text-slate-900 text-[32px] md:text-[44px] leading-[32px] md:leading-[44px] tracking-[-1px]">{latest?.temperature?.toFixed(1) ?? "--"}°C</span>
-                  <span className="font-medium text-[12px] md:text-[14px] text-slate-500 mt-[8px] md:mt-[12px]">{latest?.freshness === "stale" ? "Last known · stale" : latest?.temperature != null ? "Sample sensor value" : "No temperature reading"}</span>
+                  <span className="font-medium text-[12px] md:text-[14px] text-slate-500 mt-[8px] md:mt-[12px]">{latest?.freshness === "stale" ? "Last known · stale" : latest?.temperature != null ? "Temperature" : "No temperature reading"}</span>
                 </div>
               </div>
             </div>
@@ -195,7 +195,7 @@ export default function TankDetail() {
                     <span className="font-bold text-slate-900 text-[36px] md:text-[48px] leading-[36px] md:leading-[48px] tracking-[-1px]">{latest?.turbidity?.toFixed(1) ?? "--"}</span>
                     <span className="font-medium text-slate-500 text-[16px] md:text-[20px] pb-[4px]">NTU</span>
                   </div>
-                  <span className="font-medium text-[13px] md:text-[15px] text-slate-500 mt-[8px]">{latest?.turbidity != null ? "Sample value · NTU" : "No turbidity reading"}</span>
+                  <span className="font-medium text-[13px] md:text-[15px] text-slate-500 mt-[8px]">{latest?.turbidity != null ? "Turbidity · NTU" : "No turbidity reading"}</span>
                 </div>
               </div>
               <div className="flex items-end gap-[6px] md:gap-[8px] h-[48px] md:h-[64px] opacity-70">
@@ -215,10 +215,10 @@ export default function TankDetail() {
               <p className="font-bold text-slate-400 text-[12px] md:text-[14px] tracking-[0.8px] uppercase">Relay Control</p>
               <div className="flex items-center justify-between mt-[16px] md:mt-[24px]">
                 <div className="flex flex-col">
-                  <p className="font-bold text-slate-900 text-[18px] md:text-[20px] leading-[22px] md:leading-[26px]">{tank.name} — Demo relay</p>
-                  <p className="font-medium text-slate-500 text-[14px] md:text-[15px] mt-[4px]">{sampleMode ? "Local preview · no command sent" : "Relay commands await integration"}</p>
+                  <p className="font-bold text-slate-900 text-[18px] md:text-[20px] leading-[22px] md:leading-[26px]">{tank.name} — Relay</p>
+                  <p className="font-medium text-slate-500 text-[14px] md:text-[15px] mt-[4px]">Control not connected</p>
                 </div>
-                <button type="button" role="switch" aria-label="Sample relay preview" aria-checked={relayIsOn} disabled={!sampleMode || !device?.is_online || latest?.freshness !== 'fresh' || !Number.isFinite(latest?.temperature)} title="Local preview only; requires an online sample device and fresh temperature"
+                <button type="button" role="switch" aria-label="Relay control" aria-checked={relayIsOn} disabled={!sampleMode || !device?.is_online || latest?.freshness !== 'fresh' || !Number.isFinite(latest?.temperature)} title="Relay control is not connected"
                   onClick={handleToggleRelay}
                   className={`w-[56px] h-[32px] md:w-[64px] md:h-[36px] rounded-full relative cursor-pointer transition-colors duration-300 ${relayIsOn ? 'bg-sky-500' : 'bg-slate-200'}`}
                 >
@@ -232,7 +232,7 @@ export default function TankDetail() {
 
             <div className="flex flex-col gap-[16px] md:gap-[20px]">
               <div className="flex flex-wrap gap-3 justify-between items-center">
-                <h3 className="font-bold text-slate-900 text-[20px] md:text-[22px]">4-Hour AI Forecast · Sample</h3>
+                <h3 className="font-bold text-slate-900 text-[20px] md:text-[22px]">4-Hour Forecast</h3>
                 <button 
                   onClick={() => setShowHistoryModal(true)}
                   className="text-sky-500 font-bold text-[13px] hover:text-sky-600 transition-colors"
@@ -285,7 +285,7 @@ export default function TankDetail() {
         {/* Historical Data Section */}
         <div className="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] p-[24px] md:p-[32px] flex flex-col gap-[24px]">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-[16px]">
-            <h3 className="font-bold text-slate-900 text-[20px] md:text-[22px]">Historical Data (Sample 4-Hour Window)</h3>
+            <h3 className="font-bold text-slate-900 text-[20px] md:text-[22px]">Historical Data · 4 Hours</h3>
             <div className="flex bg-slate-50 p-[4px] rounded-full w-full md:w-auto">
               <button 
                 aria-pressed={activeTab === "temperature"} onClick={() => setActiveTab("temperature")}
@@ -310,7 +310,7 @@ export default function TankDetail() {
           
           <div className="h-[250px] md:h-[300px] w-full mt-[8px]">
             {history.length === 0 || !history.some((item) => Number.isFinite(item[activeTab])) ? (
-              <div className="w-full h-full flex items-center justify-center text-slate-500 font-medium bg-slate-50 rounded-[16px]">No valid sample history is available for this parameter.</div>
+              <div className="w-full h-full flex items-center justify-center text-slate-500 font-medium bg-slate-50 rounded-[16px]">No readings available for this parameter.</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>

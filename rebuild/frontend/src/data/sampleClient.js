@@ -22,17 +22,17 @@ function currentTanks() {
 }
 async function respond(read) {
   if (scenario === 'loading') return new Promise(() => {}) // Deliberately paused preview, no network request.
-  if (scenario === 'error') throw new Error('Simulated sample load error. Restore sample data to retry.')
+  if (scenario === 'error') throw new Error('Unable to load data. Please try again.')
   return structuredClone(read())
 }
 function findTank(id) {
   const tank = currentTanks().find((item) => String(item.id) === String(id))
-  if (!tank) throw new Error('Sample tank not found.')
+  if (!tank) throw new Error('Tank not found.')
   return tank
 }
 export const api = {
   listTanks: () => respond(() => currentTanks()),
-  listDevices: () => respond(() => currentTanks().map((tank) => ({ id: tank.device.id, tank_id: tank.id, name: 'Aquasense Pro · Sample', is_online: tank.device.connection === 'online', connection_state: tank.device.connection, sample_only: true }))),
+  listDevices: () => respond(() => currentTanks().map((tank) => ({ id: tank.device.id, tank_id: tank.id, name: 'Aquasense Pro', is_online: tank.device.connection === 'online', connection_state: tank.device.connection, sample_only: true }))),
   getTankSummary: (id) => respond(() => { const tank = findTank(id); return { tank, latest_water_log: makeScreenLog(tank) } }),
   getLatestPrediction: (id) => respond(() => makeScreenForecast(findTank(id))),
   getPredictionHistory: (id) => respond(() => [makeScreenForecast(findTank(id)), makeScreenForecast(findTank(id), 1)].filter(Boolean)),
@@ -47,7 +47,7 @@ export const api = {
   })),
   createTank: (data) => respond(() => {
     const id = `sample-tank-${nextTank++}`
-    const tank = { ...data, id, location: 'Sample workspace', sample_only: true, device: { id: `SAMPLE-UNASSIGNED-${id}`, connection: 'unknown' }, reading: null }
+    const tank = { ...data, id, location: 'Unassigned', sample_only: true, device: { id: `SAMPLE-UNASSIGNED-${id}`, connection: 'unknown' }, reading: null }
     tanks = [...tanks, tank]; notify(); return tank
   }),
   updateTank: (id, data) => respond(() => {

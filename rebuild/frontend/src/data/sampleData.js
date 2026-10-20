@@ -41,7 +41,7 @@ export const sampleTanks = [
 ]
 
 export const scenarios = [
-  { value: 'ready', label: 'Mixed sample data', description: 'Four fictional tanks with fresh, stale, offline, and missing readings.' },
+  { value: 'ready', label: 'Overview', description: 'Four fictional tanks with fresh, stale, offline, and missing readings.' },
   { value: 'loading', label: 'Loading', description: 'Loading preview is paused. Choose another scenario to continue.' },
   { value: 'empty', label: 'Empty', description: 'No sample tanks or readings are available in this scenario.' },
   { value: 'error', label: 'Error', description: 'A simulated load failure. Retry restores sample data only.' },

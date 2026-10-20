@@ -2,11 +2,9 @@ import { useState, useEffect } from "react";
 import AppHeader from "../components/AppHeader";
 import { api } from "../api/client";
 import { sampleLogsCsv } from "../api/exportCsv.js";
-import { getDataMode } from "../../services/dataSource.js";
 import { formatSampleTime, phProvenanceLabel } from "../../presentation.js";
 
 export default function DataExport() {
-  const sampleMode = getDataMode() === "sample";
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,7 +34,7 @@ export default function DataExport() {
     const blob=new Blob([sampleLogsCsv(logs)],{type:'text/csv;charset=utf-8;'});
     const url=URL.createObjectURL(blob);
     const link=document.createElement('a');
-    link.href=url; link.download=sampleMode?'bangus_sample_logs.csv':'bangus_logs.csv';
+    link.href=url; link.download='bangus_logs.csv';
     document.body.appendChild(link); link.click(); link.remove();
     setTimeout(()=>URL.revokeObjectURL(url),1000);
   };
@@ -63,14 +61,14 @@ export default function DataExport() {
               <polyline points="7 10 12 15 17 10"></polyline>
               <line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
-            {sampleMode ? "Export sample CSV" : "Export CSV"}
+            Export CSV
           </button>
         </div>
 
         <div className="bg-white rounded-[24px] shadow-[0_4px_20px_rgba(15,23,42,0.04)] overflow-hidden border border-slate-100 flex-1 flex flex-col">
           {loading ? (
             <div className="flex-1 flex items-center justify-center min-h-[300px]">
-              <div role="status" aria-label="Loading sample data" className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+              <div role="status" aria-label="Loading data" className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
           ) : error ? (
             <div className="flex-1 flex items-center justify-center min-h-[300px] text-red-500 font-medium">
@@ -81,7 +79,7 @@ export default function DataExport() {
               No data available.
             </div>
           ) : (
-            <div role="region" aria-label="Sample telemetry table" tabIndex={0} className="overflow-x-auto">
+            <div role="region" aria-label="Telemetry table" tabIndex={0} className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-[12px] uppercase tracking-[1px] font-bold">
@@ -90,7 +88,7 @@ export default function DataExport() {
                     <th className="py-[16px] px-[24px]">Temp</th>
                     <th className="py-[16px] px-[24px]">pH</th>
                     <th className="py-[16px] px-[24px]">Turbidity</th>
-                    <th className="py-[16px] px-[24px]">Sample relay</th>
+                    <th className="py-[16px] px-[24px]">Relay</th>
                   </tr>
                 </thead>
                 <tbody>

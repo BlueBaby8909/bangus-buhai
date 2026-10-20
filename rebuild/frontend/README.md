@@ -1,6 +1,6 @@
 # Bangus BuhAI rebuild frontend
 
-The active UI now reuses all original frontend screens and the original Dashboard / Tanks / Alerts / Data sidebar and mobile bottom navigation. The root `frontend/` is preserved unchanged. Backend-dependent features use labelled local sample data while integration remains unfinished; this is not completion of T16–T18.
+The active UI now reuses all original frontend screens and the original Dashboard / Tanks / Alerts / Data sidebar and mobile bottom navigation. The root `frontend/` is preserved unchanged. Backend-dependent features still use local sample data while integration remains unfinished. Product screens use neutral wording with an Offline workspace indicator; CSV source metadata still identifies fixtures. This is not completion of T16–T18.
 
 ## Run and check
 
@@ -41,7 +41,7 @@ React/JavaScript/Vite remain in use. The owner approved the original UI librarie
 
 ## Sample controls and limits
 
-Expand **Preview options** for mixed, loading, empty, error, offline, stale, invalid, or missing data. Loading is deliberately paused. **Reset samples** resets local tank changes and the scenario; reload also resets changes. No database/device data is changed. Scenario changes remount the original screens to demonstrate their loading/empty/error states. A fixed 20 October 2026, 09:30 SGT sample clock makes state review reproducible.
+Developer scenario controls are hidden on normal routes. Open `http://127.0.0.1:5174/#/tanks/nursery-01?tools=1` and expand **Display states** for mixed, loading, empty, error, offline, stale, invalid, or missing data. Loading is deliberately paused. **Reset workspace** resets local tank changes and the scenario; reload also resets changes. No database/device data is changed. Scenario changes remount the original screens to demonstrate their loading/empty/error states. A fixed 20 October 2026, 09:30 SGT sample clock makes state review reproducible.
 
 Forecasts and history are fictional illustrations, not model output, calibration, physical pH measurement, or validated forecast evidence. No numerical biological limits or water-quality evaluation algorithm were copied from the prototype. Alert examples and display-availability checks do not establish a production policy. Real authentication, authorization, APIs/MQTT, relay commands, inference, durable alerting/notifications, and full integration remain unfinished. Manual water-log entry is still required by the PRD and absent from the original UI.
 
@@ -50,3 +50,7 @@ Progress, verification evidence, uncommitted files, and the next integration ste
 ## Integration preparation (2026-10-20)
 
 Verbose fresh-sample/clock explanation panels are removed. A compact sample badge and collapsed preview controls remain; exceptional reading states use short text. Default/estimated pH labels remain beside values. The provider boundary validates required operations and normalizes errors without silently substituting fixtures. Backend mode hides sample controls and disables relay commands. Seven regression checks cover the sample adapter and provider boundary. This is preparation only: real authentication, transport, accepted payload mapping and full T16–T18 integration remain unfinished.
+
+## Product wording (2026-10-20)
+
+At the collaborator’s request, active screen titles, buttons, dialogs, alerts and accessible labels no longer repeat sample/demo/preview explanations. The small Offline workspace indicator remains while the sample provider is selected, alongside default/estimated pH labels and disconnected relay wording. The export filename is bangus_logs.csv; its source column still identifies SAMPLE ONLY records. Internal fixture names/metadata and developer documentation remain explicit. Commercial wording does not establish validated forecasting, real controls, persistent CRUD or production readiness. No dependency or backend changes.

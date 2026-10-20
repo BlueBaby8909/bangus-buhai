@@ -102,7 +102,7 @@ export default function Tanks() {
               <div className="bg-sky-300 w-[10px] h-[10px] rounded-full shadow-[0_0_8px_rgba(125,211,252,0.8)]"></div>
               <div className="flex flex-col">
                 <span className="font-bold text-white text-[14px] md:text-[16px] leading-[18px] md:leading-[20px]">Aquasense Pro</span>
-                <span className="font-medium text-sky-100 text-[12px] md:text-[14px] leading-[16px] md:leading-[18px]">Sample workspace · not connected</span>
+                <span className="font-medium text-sky-100 text-[12px] md:text-[14px] leading-[16px] md:leading-[18px]">Manage your tanks and devices</span>
               </div>
             </div>
             <button onClick={() => document.getElementById("sample-tank-list")?.focus()} className="bg-white hover:bg-sky-50 transition-colors rounded-full px-[16px] py-[8px] md:px-[20px] md:py-[10px] flex items-center gap-[6px] shadow-sm">
@@ -146,7 +146,7 @@ export default function Tanks() {
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-[16px] md:gap-[24px]">
             {loading ? (
               <div className="col-span-full py-10 flex justify-center">
-                <div role="status" aria-label="Loading sample data" className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+                <div role="status" aria-label="Loading data" className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
               </div>
             ) : error ? (
               <div className="col-span-full py-10 text-center text-slate-500">{error}</div>

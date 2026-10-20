@@ -58,7 +58,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="bg-slate-50 flex flex-col min-h-screen items-center justify-center">
-        <div role="status" aria-label="Loading sample data" className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+        <div role="status" aria-label="Loading data" className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -67,7 +67,7 @@ export default function Dashboard() {
     return (
       <div className="bg-slate-50 flex flex-col min-h-screen p-10 items-center justify-center">
         <p className="text-slate-500">
-          {error || "No sample tanks available. Add one from the Tanks page or restore the sample data."}
+          {error || "No tanks yet. Add a tank from the Tanks page."}
         </p>
       </div>
     );
@@ -124,15 +124,15 @@ export default function Dashboard() {
             </div>
             <div className="flex flex-col flex-1">
               <h3 className="font-bold text-slate-900 text-[15px] md:text-[16px] leading-[20px]">
-                Sample Forecast Preview
+                Water Quality Forecast
               </h3>
               <p className="text-slate-500 text-[13px] md:text-[14px] leading-[18px] mt-[2px]">
-                Illustrative horizons · not model output
+                Explore the next four hours
               </p>
             </div>
             <div className="bg-sky-50 rounded-full px-[12px] py-[6px]">
               <span className="font-bold text-sky-700 text-[11px] md:text-[12px]">
-                SAMPLE
+                4 HOURS
               </span>
             </div>
           </div>
@@ -194,7 +194,7 @@ export default function Dashboard() {
                 <div className="mt-auto flex justify-between items-end">
                   <div className="flex flex-col mb-4 md:mb-6">
                     <p className="font-bold text-slate-400 text-[12px] md:text-[14px] tracking-[0.8px] uppercase">
-                      Sample parameters
+                      Parameters
                     </p>
                     <p className="font-bold text-sky-600 text-[48px] md:text-[56px] leading-[48px] md:leading-[56px] tracking-[-1.2px] mt-1 md:mt-2">
                       3{" "}
@@ -218,10 +218,10 @@ export default function Dashboard() {
             </Link>
           </div>
 
-          {/* Sample Readings */}
+          {/* Readings */}
           <div className="flex flex-col gap-[12px] md:gap-[20px]">
             <h3 className="font-bold text-slate-900 text-[18px] md:text-[22px] leading-[28px]">
-              Sample Readings
+              Readings
             </h3>
             <div className="grid grid-cols-2 grid-rows-2 gap-[16px] md:gap-[24px] h-[280px] md:h-[340px]">
               {/* Temperature Card */}
@@ -232,9 +232,6 @@ export default function Dashboard() {
                     alt="Temp"
                     className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] brightness-0 invert"
                   />
-                  <span className="bg-white/20 text-white text-[11px] md:text-[13px] font-bold px-[10px] md:px-[12px] py-[4px] md:py-[6px] rounded-full backdrop-blur-md shadow-sm">
-                    Sample
-                  </span>
                 </div>
                 <div className="flex flex-col z-10 mt-auto">
                   <div className="flex items-end gap-[2px]">

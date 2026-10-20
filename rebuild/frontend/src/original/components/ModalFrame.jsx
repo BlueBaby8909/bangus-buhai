@@ -15,5 +15,5 @@ export default function ModalFrame({ children, onClose, label }) {
     if(event.shiftKey && document.activeElement===first){event.preventDefault();last?.focus()}
     else if(!event.shiftKey && document.activeElement===last){event.preventDefault();first?.focus()}
   }
-  return <dialog ref={dialogRef} aria-label={label} onKeyDown={keepFocusInDialog} onCancel={(event)=>{event.preventDefault();onClose()}} className={`sample-dialog ${label.includes('prediction') ? 'sample-dialog-wide' : ''}`}>{children}</dialog>
+  return <dialog ref={dialogRef} aria-label={label} onKeyDown={keepFocusInDialog} onCancel={(event)=>{event.preventDefault();onClose()}} className={`sample-dialog ${label.toLowerCase().includes('history') ? 'sample-dialog-wide' : ''}`}>{children}</dialog>
 }

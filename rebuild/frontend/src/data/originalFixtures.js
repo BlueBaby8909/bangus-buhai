@@ -39,7 +39,7 @@ export function makeScreenForecast(tank, hoursAgo = 0) {
   const result = {
     id: `sample-forecast-${tank.id}-${hoursAgo}`, tank_id: tank.id,
     created_at: origin, predicted_from: origin, ph_provenance: 'estimated',
-    sample_only: true, quality_label: 'Sample only', confidence_label: 'Unvalidated illustration',
+    sample_only: true, quality_label: 'Unavailable', confidence_label: 'Unvalidated illustration',
   }
   for (const hour of [1, 2, 3, 4]) {
     result[`temperature_${hour}h`] = Number((log.temperature + hour * .2).toFixed(1))
@@ -51,7 +51,7 @@ export function makeScreenForecast(tank, hoursAgo = 0) {
 }
 
 export const screenAlertFixtures = [
-  { id: 'sample-offline', tank_id: 'nursery-03', type: 'Critical', category: 'Connection', title: 'Sample sensor offline', message: 'Fictional connection alert. Last-known values do not establish current conditions.', color: 'bg-red-50 text-red-700', titleColor: 'text-red-600', dotColor: 'bg-red-500' },
-  { id: 'sample-stale', tank_id: 'nursery-02', type: 'Warning', category: 'Reading freshness', title: 'Sample readings are stale', message: 'Fictional freshness warning supplied by the fixture. No frontend water-quality thresholds are calculated.', color: 'bg-amber-50 text-amber-800', titleColor: 'text-amber-600', dotColor: 'bg-amber-500' },
-  { id: 'sample-forecast', tank_id: 'nursery-01', type: 'AI Forecast', category: 'Forecast preview', title: 'Illustrative forecast available', message: 'Fictional +1 to +4 hour values demonstrate the original forecast layout. They are not model output or validated predictions.', color: 'bg-sky-50 text-sky-800', titleColor: 'text-sky-600', dotColor: 'bg-sky-500' },
-].map((alert) => ({ ...alert, tank: sampleTanks.find((tank) => tank.id === alert.tank_id).name, time: 'Sample', recorded_at: sampleReferenceTime, sample_only: true }))
+  { id: 'sample-offline', tank_id: 'nursery-03', type: 'Critical', category: 'Connection', title: 'Device offline', message: 'The device is offline. Readings show its last reported values.', color: 'bg-red-50 text-red-700', titleColor: 'text-red-600', dotColor: 'bg-red-500' },
+  { id: 'sample-stale', tank_id: 'nursery-02', type: 'Warning', category: 'Reading freshness', title: 'Readings are out of date', message: 'No recent readings have been received. Check the device connection.', color: 'bg-amber-50 text-amber-800', titleColor: 'text-amber-600', dotColor: 'bg-amber-500' },
+  { id: 'sample-forecast', tank_id: 'nursery-01', type: 'AI Forecast', category: 'Forecast', title: 'Forecast available', message: 'View the four-hour temperature, pH and turbidity outlook.', color: 'bg-sky-50 text-sky-800', titleColor: 'text-sky-600', dotColor: 'bg-sky-500' },
+].map((alert) => ({ ...alert, tank: sampleTanks.find((tank) => tank.id === alert.tank_id).name, time: '20 Oct 2026, 09:30 SGT', recorded_at: sampleReferenceTime, sample_only: true }))

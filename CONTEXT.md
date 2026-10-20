@@ -8,7 +8,7 @@ Task router for humans and AI tools. Start with [AGENTS.md](AGENTS.md); product 
 
 ## Parallel frontend collaboration
 
-2026-10-20: frontend collaboration now restores the original Dashboard/Tanks/Alerts/Data navigation and feature screens in `rebuild/frontend/`, with approved original UI libraries and labelled sample history/forecast/export/tank-dialog/relay-preview flows. Latest preparation removes verbose sample explanation panels and adds a replaceable data-provider boundary plus a frontend integration guide; live integration remains pending. The [separate frontend handoff](docs/status/tasks/frontend-T16-T18-preparation.md) owns checks, limitations and the next integration step. T16–T18 remain incomplete. Firmware T07 remains the active session below; its handoff/status is preserved.
+2026-10-20: frontend collaboration now restores the original Dashboard/Tanks/Alerts/Data navigation and feature screens in `rebuild/frontend/`, with approved original UI libraries and labelled sample history/forecast/export/tank-dialog/relay-preview flows. Latest preparation adds a replaceable data-provider boundary and integration guide. Product wording now uses neutral headings/actions; the offline indicator and pH provenance remain, with developer scenario controls hidden on normal routes. Live integration remains pending. The [separate frontend handoff](docs/status/tasks/frontend-T16-T18-preparation.md) owns checks, limitations and the next integration step. T16–T18 remain incomplete. Firmware T07 remains the active session below; its handoff/status is preserved.
 
 ## Where to go
 

@@ -8,8 +8,8 @@ export default function AppHeader({ title, leftNode, rightNode }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const menuButton = useRef(null)
   const location = useLocation()
-  const sampleMode=getDataMode()==='sample'
-  useEffect(() => { document.title = `${title} · Bangus BuhAI${sampleMode?' · Sample preview':''}` }, [title,sampleMode])
+  const offlineWorkspace=getDataMode()==='sample'
+  useEffect(() => { document.title = `${title} · Bangus BuhAI` }, [title])
   const backAction = leftNode?.props?.onClick
   const settingsAction = rightNode?.props?.onClick
   return (
@@ -19,7 +19,7 @@ export default function AppHeader({ title, leftNode, rightNode }) {
         className="w-11 h-11 shrink-0 rounded-full border border-slate-100 bg-slate-50 flex items-center justify-center text-slate-600">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d={backAction ? 'M19 12H5M12 19l-7-7 7-7' : 'M3 6h18M3 12h18M3 18h18'} /></svg>
       </button>
-      <div className="text-center min-w-0"><h1 className="font-bold text-slate-900 text-[18px] md:text-[22px] tracking-tight">{title}</h1></div>
+      <div className="text-center min-w-0"><h1 className="font-bold text-slate-900 text-[18px] md:text-[22px] tracking-tight">{title}</h1>{offlineWorkspace && <p className="text-[11px] text-slate-500 mt-1">Offline workspace</p>}</div>
       {settingsAction ? <button type="button" onClick={settingsAction} aria-label="Tank settings" className="w-11 h-11 shrink-0 rounded-full bg-slate-50 text-xl">⚙</button> : (
         <Link to="/alerts" aria-label="Open alerts" className="relative w-11 h-11 shrink-0 rounded-full bg-slate-50 flex items-center justify-center"><img src={bellIcon} alt="" className="w-5 h-6" /><span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-cyan-400 border border-white" /></Link>
       )}
