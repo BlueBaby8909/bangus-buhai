@@ -1,8 +1,10 @@
 # Rebuild status
 
-Updated: 2026-10-17. This page owns task states and the next task. Scope and finish conditions live in the [roadmap](../roadmap.md#task-list); product requirements live in the [PRD](../PRD.md). This is distinct from the [existing-code assessment](implementation.md).
+Updated: 2026-10-20 (frontend preparation; firmware handoff preserved). This page owns task states and the next task. Scope and finish conditions live in the [roadmap](../roadmap.md#task-list); product requirements live in the [PRD](../PRD.md). This is distinct from the [existing-code assessment](implementation.md).
 
 ## Current handoff
+
+- Parallel frontend preparation (2026-10-20): original Dashboard/Tanks/Alerts/Data navigation and feature screens restored in `rebuild/frontend/` under the expanded request and library approval, with labelled sample forecast/history/chart/export/dialog/relay-preview flows. Latest preparation removes verbose sample panels and separates the sample provider behind a configurable facade; live integration remains pending reviewed contracts. Lint/build, seven sample/provider regression tests and bounded browser checks passed. [Separate frontend handoff](tasks/frontend-T16-T18-preparation.md) owns evidence, limits, uncommitted files and the next integration step. T16–T18 remain incomplete; T07 remains the firmware collaborator's active task below.
 
 - Active T07 guidance (2026-10-18): owner reports starting HiveMQ Starter trial and accepted the revised owner-led plan. Next inspect separate cluster Overview/Access Management, expiry/payment status and certificate controls. EMQX/Mosquitto no longer targeted; no automatic resource deletion. Owner implements/configures/runs commands; AI guides/reviews/maintains notes only. All firmware implementation and runtime checks pending. See [T07](tasks/T07.md).
 
@@ -37,9 +39,9 @@ States: `ready` = next bounded task can be requested; `planned` = not started; `
 | T13 | planned | No implementation evidence yet |
 | T14 | planned | No implementation evidence yet |
 | T15 | planned | No implementation evidence yet |
-| T16 | planned | No implementation evidence yet |
-| T17 | planned | No implementation evidence yet |
-| T18 | planned | No implementation evidence yet |
+| T16 | planned | Shared frontend layout/navigation prepared only; authentication/access integration unfinished. [Frontend preparation](tasks/frontend-T16-T18-preparation.md) |
+| T17 | in progress | Preparatory sample tank displays and data states checked; backend/server policy/live/auth dependencies remain unfinished. This is not full T17 completion. [Frontend preparation](tasks/frontend-T16-T18-preparation.md) |
+| T18 | in progress | Original history/chart/export and local relay/tank-dialog previews restored with sample data; manual input, permissions, real commands and integration unfinished. [Frontend preparation](tasks/frontend-T16-T18-preparation.md) |
 | T19 | planned | Domain research can begin independently; policy not yet validated |
 | T20 | planned | No implementation evidence yet |
 | T21 | planned | Model evidence gathering can begin independently |
