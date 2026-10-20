@@ -7,3 +7,24 @@ venv/
 
 # Local Obsidian preferences and workspace state; Markdown remains versioned.
 .obsidian/
+
+# ESP-IDF generated files and local configuration
+/rebuild/firmware/**/build/
+/rebuild/firmware/**/managed_components/
+/rebuild/firmware/**/sdkconfig
+/rebuild/firmware/**/sdkconfig.old
+
+# Local editor settings
+.vscode/
+.clangd
+
+# Private provisioning files and keys
+wifi_setup_material.h
+wifi-setup.json
+wifi-setup-qr.json
+*.key
+*-key.pem
+
+# Local environment variants
+.env.*
+!.env.example

@@ -1,6 +1,6 @@
 # 03 Build
 
-Implement only an authorized slice against accepted requirements and design. Apply [workspace conventions](../../../docs/operations/ai-workspace.md).
+Guide the owner through a bounded slice against accepted requirements/design. The owner implements by default; AI implementation requires an explicit request under [decision 0004](../../../docs/decisions/0004-owner-led-development.md). Apply [workspace conventions](../../../docs/operations/ai-workspace.md).
 
 ## Inputs
 
@@ -14,12 +14,12 @@ Implement only an authorized slice against accepted requirements and design. App
 
 ## Process
 
-1. Confirm the slice is authorized and its material dependencies resolved. A workspace-setup or planning request does not authorize feature implementation.
+1. Begin with a plain-language plan: goal, scope/exclusions, steps and finish checks. Resolve material slice dependencies. Task requests and plan agreement do not authorize AI implementation.
 2. Inspect the working tree and preserve unrelated changes, local configuration, data, and artifacts.
-3. Implement the bounded slice; use meaningful tests appropriate to its behavior. Record actual commands and results, including failures.
+3. Guide the owner one step at a time as they implement and run meaningful checks. Review their code/output and record actual results, including failures. AI edits/executes only the action explicitly requested; label who performed and observed checks.
 4. Update affected interfaces and evidence. If requirements or accepted design must change, reconcile them before continuing dependent work.
 5. Avoid claiming hardware, deployment, or model accuracy from source/build results alone. Do not flash hardware or migrate live data without applicable authorization.
 
 ## Outputs
 
-Write `output/<work-id>-build.md` with common metadata, exact design reference, changed-file references, checks/results, unresolved issues, and handoff to verification. Application changes are outputs only when separately authorized; never mark a slice verified merely because code was written.
+For numbered tasks, write build evidence in the single `docs/status/tasks/Txx.md` record using the [session guide](../../../docs/operations/ai-workspace.md#one-task-per-chat). Include exact design reference, changed files, checks/results, unresolved issues and the next step. For a separate stage deliverable, use `output/<work-id>-build.md` and link to the task record for progress. Application changes require applicable authorization; code written alone does not establish verification.

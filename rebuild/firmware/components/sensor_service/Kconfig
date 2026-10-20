@@ -1,0 +1,10 @@
+menu "Sensor readings"
+
+    config BB_PH_DEFAULT
+        int "Default pH multiplied by 100"
+        range 0 1400
+        default 780
+        help
+            Fixed default, not a physical measurement or a calibrated estimate.
+
+endmenu

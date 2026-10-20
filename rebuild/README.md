@@ -72,6 +72,26 @@ Open the [backend health endpoint](http://127.0.0.1:8001/health) and [frontend](
 
 The frontend should show **Bangus Buhai Rebuild** and **The frontend workspace is running.** Stop a server with Ctrl+C in its terminal. No dependency installation or clean-install check is needed for normal daily startup.
 
+## Automated checks
+
+After completing first-time setup, run in CMD:
+
+```cmd
+cd /d "C:\Users\Kent Christian\Documents\BangusBuhai\bangus-buhai\rebuild"
+check.cmd
+```
+
+This runs Python dependency checks, contract tests, fixture/schema checks,
+a backend import/health-function check, frontend lint and frontend build.
+
+Exit code 0 means all checks passed. Exit code 1 means a check failed;
+the script names the failed step and stops.
+
+The backend smoke check does not test HTTP requests or live integrations.
+
+The [GitHub workflow](../.github/workflows/rebuild-checks.yml) installs
+the recorded dependencies and runs the same script automatically.
+
 ## Checks and frontend build
 
 From `rebuild/backend/`, check dependency consistency:
@@ -96,7 +116,7 @@ backend\.venv\Scripts\python.exe -m unittest discover -s contracts\tests -v
 backend\.venv\Scripts\python.exe -m contracts check
 ```
 
-These checks do not start the app or contact a broker/database. See [contract usage and limits](contracts/README.md). T03 will add automation/CI rather than treating local tests as already automated deployment verification.
+These checks do not start the app or contact a broker/database. See [contract usage and limits](contracts/README.md). T03 now automates these checks through `check.cmd` and GitHub Actions. Deployment and live integration remain unverified.
 
 ## Optional clean-install checkpoint
 

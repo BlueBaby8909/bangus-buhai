@@ -13,7 +13,7 @@ if sys.platform == 'win32':
 
 import sys
 
-# Configuration matching your backend/mosquitto setup
+# Local MQTT simulator defaults; configure these for your selected broker.
 BROKER_HOST = "localhost"
 BROKER_PORT = 1883
 BROKER_USERNAME = "bangus_backend"

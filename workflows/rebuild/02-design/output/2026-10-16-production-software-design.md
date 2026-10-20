@@ -2,9 +2,9 @@
 
 - Work ID: `2026-10-16-production-software`
 - Date: 2026-10-16
-- State: proposed, partial design; no replacement architecture or implementation accepted yet
+- State: proposed design for review; architecture and contract drafts exist, no replacement implementation or design acceptance claimed
 - PRD IDs: R01-R22, with first-release boundary from PRD section 1
-- Reviewed revision: `785e08b41a53f837a84d6c86ac2490a772d0329b` plus uncommitted cleanup/documentation/workspace changes. This is planning based on the dated source assessment, not a new runtime audit.
+- Reviewed revision: `8ec01836b84c235d999b04f9bf4c8724bde1444f` plus earlier uncommitted cleanup and this documentation proposal. Includes targeted source inspection, not a runtime/build/hardware audit.
 - Inputs: [baseline artifact](../../01-baseline/output/2026-10-16-production-software-baseline.md), [PRD](../../../../docs/PRD.md), [release decision](../../../../docs/decisions/0003-first-production-software-release.md), [existing assessment](../../../../docs/status/implementation.md), [existing architecture](../../../../docs/reference/architecture.md), [open questions](../../../../docs/research/open-questions.md).
 
 ## Planning boundary
@@ -15,16 +15,9 @@ The baseline remains incomplete for domain/model-specific claims. Independent ar
 
 ## Proposed responsibility boundaries
 
-| Boundary | Responsibility | Design questions to settle |
-|---|---|---|
-| Device/firmware | Readings, validity/provenance, measurement time, local state and buffering | Versioned payload, clock/sequence rules, replay behavior, fail-safe state ownership |
-| MQTT ingestion | Authenticate source, validate schema, persist trustworthy events | Topic permissions, identity binding, duplicate/out-of-order policy, recovery |
-| Core API and persistence | Accounts, tank/device ownership, history, configuration, commands | Schema/migrations, authorization on every access path, consistent pagination/order |
-| Forecast and quality services | Shared quality policy, time-aware inference and evidence | Verified policy source, input eligibility, validated horizon/metrics, explicit unavailable states |
-| Operator UI and live updates | Authorized tank views, truthful state, provenance and actionable alerts | Reconnect/resync behavior; stale/missing/default data; command acceptance versus observed state |
-| Operations | Configuration, deployment, health/metrics, backup, recovery and update procedures | Environment isolation, secrets, reproducible artifacts, rollback/restore evidence |
+The [replacement architecture proposal](../../../../docs/research/rebuild-architecture.md) now owns the proposed component/task boundaries, process roles, transaction behavior, reuse/transition strategy and diagram. The [shared contract proposal](../../../../docs/research/device-and-api-contracts.md) owns proposed identity, reading/command/acknowledgement semantics and HTTP/live API conventions. Both remain provisional supporting research, not accepted requirements or implemented interfaces.
 
-These are conceptual responsibilities, not a decision to build separate microservices. The existing stack is reference evidence; the PRD's selected technologies remain requirements unless explicitly revised. Concrete replacement layout and module contracts are the next design deliverable.
+Firmware is included in production-software scope while the physical prototype hardware remains unchanged. Authentication integration, R16 group-ownership interpretation, executable schema details, queue persistence/loss budget, control arbitration and qualification budgets remain open before their dependent implementation slices. These are engineer-owned design tasks; do not request speculative farm counts to proceed.
 
 ## Proposed readiness evidence
 
@@ -63,4 +56,4 @@ No existing file is approved for deletion or production reuse by this table.
 3. Extend to authenticated MQTT ingestion, live views and outage/recovery behavior, then remaining operator workflows and demonstrations under the accepted design.
 4. Qualify forecast behavior after its independent domain/model evidence is available. Prepare infrastructure, observability, migration and recovery alongside implementation; verify release readiness against all applicable PRD criteria.
 
-Hosting, exact module layout, shared contract documents, final reuse inventory, implementation location, capacity profile and numerical acceptance targets remain pending. Continue design work without requesting speculative farm numbers; raise product decisions only when a concrete tradeoff requires them.
+Architecture, shared contract documents, proposed isolated implementation location and a source-backed candidate reuse inventory are drafted in the linked proposals. They remain unaccepted; executable schemas, concrete module layout/authentication integration, final reuse checks, capacity profile and numerical acceptance targets need further design/qualification. Continue design work without requesting speculative farm numbers; raise product decisions only when a concrete tradeoff requires them. No code, dependencies, hardware, broker/account settings or existing data were changed.

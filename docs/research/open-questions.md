@@ -26,6 +26,8 @@ Partially resolved, owner-confirmed 2026-10-16: the first release serves real op
 
 Still unresolved: confirm HiveMQ plan support and configuration for per-device mTLS and topic permissions. Broker account capabilities cannot be inferred from a successful username/password connection.
 
+Vendor evidence checked 2026-10-16: [HiveMQ's plan comparison](https://docs.hivemq.com/hivemq-platform/connect/access-management-options-per-cloud-plan.html) lists client-certificate/mTLS support for Starter/Enterprise, not Serverless, and a single active authentication method on Starter. The actual project account plan/configuration has not been inspected. Verify it against R17 before deployment; do not silently replace mutual TLS with username/password or change a subscription.
+
 Choose the backend/static frontend hosting, TLS termination, pooling, backups, monitoring, deployment gates, and secret management. The former claims about Mbed TLS 4.x/PSA Crypto and Picolibc compatibility are not verified by this audit; confirm the actual selected framework/toolchain before relying on them. MAC-derived PoP is an existing prototype mechanism, not proof of a secure production ownership flow.
 
 ## Q06 Hardware and build evidence

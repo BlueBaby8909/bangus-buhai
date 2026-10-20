@@ -46,7 +46,7 @@ menu "Bangus Buhai Configuration"
         default "bangus_device"
         help
             Username for MQTT broker authentication.
-            Must match the credentials configured in mosquitto.conf.
+            Must match the credentials configured in HiveMQ Cloud.
 
     config BB_MQTT_PASSWORD
         string "MQTT broker password"

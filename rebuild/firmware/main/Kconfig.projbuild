@@ -1,0 +1,37 @@
+menu "Bangus Buhai"
+
+    config BB_GPIO_DS18B20
+        int "DS18B20 data GPIO"
+        default 2
+        help
+            GPIO connected to the DS18B20 data line.
+            The prototype uses D1 / GPIO 2 on the XIAO ESP32-S3.
+
+    config BB_GPIO_TURBIDITY
+        int "Turbidity sensor ADC GPIO"
+        default 1
+        help
+            GPIO connected to the turbidity sensor analog output.
+            The prototype uses D0 / GPIO 1 on the XIAO ESP32-S3.
+
+    config BB_GPIO_RELAY
+        int "Active-low demo relay GPIO"
+        range 0 48
+        default 3
+
+    config BB_GPIO_I2C_SDA
+        int "LCD SDA GPIO"
+        range 0 48
+        default 4
+
+    config BB_GPIO_I2C_SCL
+        int "LCD SCL GPIO"
+        range 0 48
+        default 5
+
+    config BB_LCD_I2C_ADDRESS
+        hex "LCD I2C address"
+        range 0x08 0x77
+        default 0x27
+
+endmenu

@@ -15,9 +15,7 @@ No community plugins are required. Continue using normal Markdown links. If depe
 
 ## Use from an AI tool
 
-Open this repository as the tool's workspace. Start with:
-
-> Read AGENTS.md and CONTEXT.md. Use the rebuild baseline stage. Reconcile the existing PRD with the rebuild direction, identify decisions still needed, and write a proposed baseline artifact. Do not change application code or silently revise requirements.
+Open this repository as the tool's workspace. For normal work, use the starting prompt in [One task per chat](#one-task-per-chat), which reads current status and selects the next numbered task. Request baseline reconciliation explicitly only when requirements/scope need review; do not restart the baseline interview at every new session.
 
 Tools that load AGENTS.md automatically get the shared entry instructions. CLAUDE.md points there too. CONTEXT.md is a routing convention, not a universally auto-loaded filename: explicitly direct other tools to read it. No MCP connection is needed to read local Markdown.
 
@@ -28,6 +26,20 @@ For a later session, name the stage and exact prior artifact/work ID. Ask the as
 Follow the [knowledge index](../README.md) for evidence and promotion rules. The PRD owns product requirements; source establishes actual implementation. Stage outputs are working artifacts, not additional specifications. Link accepted decisions, architecture/contracts, status, and runbooks from their canonical homes. Keep proposals visibly provisional.
 
 Existing-code reference/status documents remain dated. When replacement design or implementation is accepted, give it a separately labeled document rather than overwriting the old assessment as if it described new code. The [rebuild decision](../decisions/0002-rebuild-direction.md) establishes the current direction and limits.
+
+## One task per chat
+
+The owner implements the project themselves and moves between conversations for each task. Under [decision 0004](../decisions/0004-owner-led-development.md), the AI starts with a simple plan and acts as a guide. Read-only inspection supports planning/review; implementation edits and execution require an explicit, scoped request. The [roadmap](../roadmap.md#task-list) gives tasks stable IDs; [status](../status/rebuild.md) identifies the current task. Its record under `docs/status/tasks/Txx.md` is the cross-chat handoff, not an instruction to execute automatically.
+
+Open the same repository workspace in the new chat. Because the repository is inside the outer BangusBuhai folder, specify the actual repository directory when needed. Use this starting prompt:
+
+> Work in C:\Users\Kent Christian\Documents\BangusBuhai\bangus-buhai. Read AGENTS.md, CONTEXT.md, docs/status/rebuild.md and the current task record. Start with a simple plan explaining the goal, scope, steps and how we will check the result. I will implement the task myself. Guide me one step at a time and review my work. Read-only inspection is fine. Do not edit implementation files, run setup/build/test commands, or stage/commit/push unless I explicitly ask. Keep our progress notes current and save the exact next guided step for the following session.
+
+To choose a task, name its ID, such as T01. Start by explaining its goal, why it matters, scope/exclusions, small steps and finish checks. The owner then edits/runs the steps; the AI explains/reviews, using small examples when helpful. A task request, "continue", or agreement with a plan is not permission for AI implementation. An explicit request such as "edit this function for me" authorizes only that action. The owner opens their own next session; do not create a session or send instructions to another one unless explicitly asked.
+
+Before leaving a working chat, record guidance given, work actually completed by the owner or explicitly delegated to the AI, reviewed files/results, remaining issues and the next guided step. Label user-reported results versus output the AI actually inspected or checks it was explicitly asked to run. Mark done only when finish conditions have evidence; otherwise leave in progress/waiting with a concrete reason. Keep status/CONTEXT current under the agreed documentation maintenance. Implementation Git actions need an explicit request; record the actual SHA or pending paths without implying a push/backup happened.
+
+For numbered tasks, build/verify sections can live together in the single task record. Stage-specific output files are used when an additional deliverable is useful and should link to the task record for progress rather than duplicate it. Prior baseline/design outputs remain dated context. A new chat must inspect current files/tests, not treat old handoff text as fresh verification. Files remain available in the same local workspace; switching machines requires a saved/transferred repository including the relevant changes.
 
 ## Output and handoff convention
 

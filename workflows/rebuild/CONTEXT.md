@@ -1,6 +1,6 @@
 # Rebuild workflow
 
-This is a lightweight adaptation of Interpretable Context Methodology: stage-specific instructions and Markdown handoffs. Follow [workspace conventions](../../docs/operations/ai-workspace.md) and existing authorization; folder numbering does not authorize application changes.
+This is a lightweight adaptation of Interpretable Context Methodology: stage-specific instructions and Markdown handoffs. Follow [workspace conventions](../../docs/operations/ai-workspace.md) and [owner-led development](../../docs/decisions/0004-owner-led-development.md): plan first, guide the owner's work, and implement/execute only when explicitly asked. Folder numbering and task requests do not authorize application changes.
 
 ## Stage routing
 
