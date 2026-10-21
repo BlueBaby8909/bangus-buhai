@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { afterEach, test } from 'node:test'
 import { api, resetSamples, setScenario } from '../src/data/sampleClient.js'
-import { sampleLogsCsv } from '../src/original/api/exportCsv.js'
+import { sampleLogsCsv } from '../src/api/exportCsv.js'
 import { createDataClient, DataClientError, dataMethods } from '../src/services/createDataClient.js'
 import { configureDataSource, api as configuredApi, getDataMode, getScenario, setScenario as previewScenario } from '../src/services/dataSource.js'
 import { phProvenanceLabel } from '../src/presentation.js'

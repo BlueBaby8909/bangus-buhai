@@ -1,13 +1,16 @@
+import { RequestError } from "../components/RequestState.jsx";
 import { useState, useEffect } from "react";
 import AppHeader from "../components/AppHeader";
 import { api } from "../api/client";
-import { sampleLogsCsv } from "../api/exportCsv.js";
-import { formatSampleTime, phProvenanceLabel } from "../../presentation.js";
+import { logsCsv } from "../api/exportCsv.js";
+import { formatTimestamp, phProvenanceLabel } from "../presentation.js";
 
 export default function DataExport() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [revision,setRevision] = useState(0);
+  const retry = () => {setLoading(true);setError(null);setRevision(value=>value+1)};
 
   useEffect(() => {
     let mounted = true;
@@ -19,19 +22,19 @@ export default function DataExport() {
           setLogs(data);
           setError(null);
         }
-      } catch {
-        if (mounted) setError("Failed to fetch global logs.");
+      } catch (error) {
+        if (mounted) setError(error.message || "Failed to fetch global logs.");
       } finally {
         if (mounted) setLoading(false);
       }
     }
     fetchLogs();
     return () => { mounted = false; };
-  }, []);
+  }, [revision]);
 
   const handleExportCSV = () => {
     if (!logs.length) return;
-    const blob=new Blob([sampleLogsCsv(logs)],{type:'text/csv;charset=utf-8;'});
+    const blob=new Blob([logsCsv(logs)],{type:'text/csv;charset=utf-8;'});
     const url=URL.createObjectURL(blob);
     const link=document.createElement('a');
     link.href=url; link.download='bangus_logs.csv';
@@ -53,7 +56,7 @@ export default function DataExport() {
           
           <button 
             onClick={handleExportCSV}
-            disabled={loading || logs.length === 0}
+            disabled={loading || !!error || logs.length === 0}
             className="w-full md:w-auto bg-sky-500 hover:bg-sky-600 text-white px-[20px] py-[12px] rounded-[16px] font-bold text-[14px] flex items-center justify-center gap-[8px] transition-colors shadow-[0_4px_12px_rgba(14,165,233,0.3)] disabled:opacity-50 disabled:hover:bg-sky-500"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -72,7 +75,7 @@ export default function DataExport() {
             </div>
           ) : error ? (
             <div className="flex-1 flex items-center justify-center min-h-[300px] text-red-500 font-medium">
-              {error}
+              <RequestError message={error} onRetry={retry} />
             </div>
           ) : logs.length === 0 ? (
             <div className="flex-1 flex items-center justify-center min-h-[300px] text-slate-500 font-medium">
@@ -95,7 +98,7 @@ export default function DataExport() {
                   {logs.map((log) => (
                     <tr key={log.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
                       <td className="py-[16px] px-[24px] text-[14px] text-slate-600 font-medium whitespace-nowrap">
-                        {formatSampleTime(log.recorded_at)}
+                        {formatTimestamp(log.recorded_at)}
                       </td>
                       <td className="py-[16px] px-[24px] text-[14px] text-slate-900 font-bold">
                         Tank {log.tank_id}
@@ -111,7 +114,7 @@ export default function DataExport() {
                       </td>
                       <td className="py-[16px] px-[24px]">
                         <div className={`inline-flex items-center px-[8px] py-[4px] rounded-[6px] text-[12px] font-bold ${log.relay_on ? 'bg-sky-50 text-sky-600' : 'bg-slate-100 text-slate-500'}`}>
-                          {log.relay_on ? 'ON' : 'OFF'}
+                          {typeof log.relay_on === 'boolean' ? (log.relay_on ? 'ON' : 'OFF') : 'Unknown'}
                         </div>
                       </td>
                     </tr>

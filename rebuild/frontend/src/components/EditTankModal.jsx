@@ -6,18 +6,19 @@ import { useNavigate } from "react-router-dom";
 export default function EditTankModal({ tank, onClose, onSuccess }) {
   const navigate = useNavigate();
   const [name, setName] = useState(tank?.name || "");
-  const [volumeMl, setVolumeMl] = useState(tank?.volume_ml || 10000);
+  const [volumeMl, setVolumeMl] = useState(tank?.volume_ml ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    if (loading) return;
     if (!name.trim()) {
       setError("Tank name is required.");
       return;
     }
-    if (volumeMl <= 0) {
+    if (!Number.isFinite(Number(volumeMl)) || Number(volumeMl) <= 0) {
       setError("Volume must be greater than 0.");
       return;
     }
@@ -51,7 +52,7 @@ export default function EditTankModal({ tank, onClose, onSuccess }) {
   };
 
   return (
-    <ModalFrame onClose={onClose} label="Tank settings">
+    <ModalFrame onClose={onClose} label="Tank settings" busy={loading}>
       <div className="bg-white rounded-[24px] shadow-[0_8px_32px_rgba(15,23,42,0.1)] w-full max-w-md p-[24px] md:p-[32px] transform transition-all">
         <div className="flex justify-between items-center mb-[24px]">
           <h2 className="text-[20px] md:text-[24px] font-bold text-slate-900">Tank Settings</h2>
@@ -63,16 +64,16 @@ export default function EditTankModal({ tank, onClose, onSuccess }) {
         </div>
 
         {error && (
-          <div className="mb-[16px] p-[12px] bg-red-50 text-red-600 rounded-[12px] text-[14px] font-medium border border-red-100">
+          <div role="alert" className="mb-[16px] p-[12px] bg-red-50 text-red-600 rounded-[12px] text-[14px] font-medium border border-red-100">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleUpdate} className="flex flex-col gap-[20px]">
+        <form aria-busy={loading} onSubmit={handleUpdate} className="flex flex-col gap-[20px]">
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[14px] font-bold text-slate-900" htmlFor="sample-tank-name">Tank Name</label>
-            <input 
-              id="sample-tank-name" required maxLength={80} type="text" 
+            <label className="text-[14px] font-bold text-slate-900" htmlFor="tank-name">Tank Name</label>
+            <input
+              id="tank-name" required maxLength={80} type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="px-[16px] py-[12px] rounded-[12px] bg-slate-50 border border-slate-200 focus:border-sky-500 focus:bg-white focus:outline-none transition-colors text-[15px] font-medium text-slate-900"
@@ -80,9 +81,9 @@ export default function EditTankModal({ tank, onClose, onSuccess }) {
           </div>
 
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[14px] font-bold text-slate-900" htmlFor="sample-tank-volume">Volume (mL)</label>
-            <input 
-              id="sample-tank-volume" required step="any" type="number" 
+            <label className="text-[14px] font-bold text-slate-900" htmlFor="tank-volume">Volume (mL)</label>
+            <input
+              id="tank-volume" required step="any" type="number"
               value={volumeMl}
               onChange={(e) => setVolumeMl(e.target.value)}
               min="1"
@@ -90,8 +91,8 @@ export default function EditTankModal({ tank, onClose, onSuccess }) {
             />
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={loading}
             className="mt-[8px] w-full py-[14px] bg-slate-900 hover:bg-slate-800 text-white rounded-[16px] font-bold text-[15px] shadow-sm transition-colors disabled:opacity-70"
           >
@@ -105,19 +106,19 @@ export default function EditTankModal({ tank, onClose, onSuccess }) {
               <h3 className="font-bold text-slate-900 text-[15px]">Danger Zone</h3>
               <p className="text-slate-500 text-[13px] mt-[2px]">Remove this tank from your workspace.</p>
             </div>
-            
+
             {showConfirmDelete ? (
               <div className="flex flex-col gap-[8px] bg-red-50 p-[12px] rounded-[16px] border border-red-100">
                 <p className="font-bold text-red-600 text-[13px] text-center">Are you absolutely sure?</p>
                 <div className="flex gap-[8px]">
-                  <button 
+                  <button
                     onClick={() => setShowConfirmDelete(false)}
                     disabled={loading}
                     className="flex-1 py-[10px] bg-white text-slate-700 border border-slate-200 rounded-[12px] font-bold text-[13px] hover:bg-slate-50"
                   >
                     Cancel
                   </button>
-                  <button 
+                  <button
                     onClick={handleDelete}
                     disabled={loading}
                     className="flex-1 py-[10px] bg-red-600 text-white rounded-[12px] font-bold text-[13px] shadow-[0_2px_8px_rgba(220,38,38,0.3)] hover:bg-red-700"
@@ -127,7 +128,7 @@ export default function EditTankModal({ tank, onClose, onSuccess }) {
                 </div>
               </div>
             ) : (
-              <button 
+              <button
                 onClick={() => setShowConfirmDelete(true)}
                 disabled={loading}
                 className="w-full py-[12px] bg-white text-red-600 border border-red-100 rounded-[16px] font-bold text-[14px] hover:bg-red-50 transition-colors"

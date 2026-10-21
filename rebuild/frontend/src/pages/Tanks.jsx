@@ -1,4 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { createRequestGate } from '../services/requestGate.js';
+import { RequestError } from '../components/RequestState.jsx';
 import { Link } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
 import { api } from "../api/client";
@@ -22,8 +24,12 @@ export default function Tanks() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const gate = useRef(createRequestGate());
 
   const loadData = useCallback(async () => {
+    const isCurrent = gate.current.begin();
+    setLoading(true);
+    setError(null);
     try {
       const [tanks, devices] = await Promise.all([
         api.listTanks(),
@@ -31,9 +37,10 @@ export default function Tanks() {
       ]);
       
       const summaries = await Promise.all(tanks.map(t => api.getTankSummary(t.id).catch(()=>null)));
+      if (!isCurrent()) return;
 
       const mergedTanks = tanks.map((tank, i) => {
-        const device = devices.find(d => d.tank_id === tank.id);
+        const device = devices.find(d => String(d.tank_id) === String(tank.id));
         const summary = summaries[i];
         
         const actualStatus = !device || device.connection_state === "unknown" ? "Unknown" : !device.is_online ? "Offline"
@@ -47,15 +54,17 @@ export default function Tanks() {
       });
       setDisplayTanks(mergedTanks);
       setError(null);
-    } catch {
-      setError("Failed to load tanks.");
+    } catch (error) {
+      if (isCurrent()) setError(error.message || "Failed to load tanks.");
     } finally {
-      setLoading(false);
+      if (isCurrent()) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
+    const requestGate = gate.current;
     void Promise.resolve().then(loadData);
+    return () => requestGate.cancel();
   }, [loadData]);
 
   return (
@@ -70,20 +79,11 @@ export default function Tanks() {
           }}
         />
       )}
-      <AppHeader 
-        title="Tanks" 
-        leftNode={
-          <div className="bg-white rounded-full p-[8px] md:p-[10px] shadow-sm border border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="md:w-[24px] md:h-[24px]">
-              <path d="M3 12H21M3 6H21M3 18H21" stroke="#64748b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-        } 
-      />
+      <AppHeader title="Tanks" />
       <div className="flex-1 w-full pb-[32px] pt-[16px] px-[16px] md:px-[40px] md:py-[32px] flex flex-col gap-[24px] md:gap-[32px]">
         
         {/* Header Hero */}
-        <div className="sample-tank-hero bg-white rounded-[32px] shadow-[0_4px_24px_rgba(15,23,42,0.05)] flex flex-col overflow-hidden relative">
+        <div className="tank-hero bg-white rounded-[32px] shadow-[0_4px_24px_rgba(15,23,42,0.05)] flex flex-col overflow-hidden relative">
           <div className="h-[180px] md:h-[240px] relative w-full p-[24px] md:p-[40px] z-10 flex items-center">
             <div className="absolute left-[24px] md:left-[40px] w-[180px] md:w-[300px] flex flex-col">
               <div className="bg-sky-50 rounded-[12px] w-[44px] h-[44px] md:w-[56px] md:h-[56px] flex items-center justify-center mb-[16px] shadow-sm">
@@ -105,7 +105,7 @@ export default function Tanks() {
                 <span className="font-medium text-sky-100 text-[12px] md:text-[14px] leading-[16px] md:leading-[18px]">Manage your tanks and devices</span>
               </div>
             </div>
-            <button onClick={() => document.getElementById("sample-tank-list")?.focus()} className="bg-white hover:bg-sky-50 transition-colors rounded-full px-[16px] py-[8px] md:px-[20px] md:py-[10px] flex items-center gap-[6px] shadow-sm">
+            <button onClick={() => document.getElementById("tank-list")?.focus()} className="bg-white hover:bg-sky-50 transition-colors rounded-full px-[16px] py-[8px] md:px-[20px] md:py-[10px] flex items-center gap-[6px] shadow-sm">
               <span className="font-bold text-sky-700 text-[13px] md:text-[14px]">Browse</span>
               <img src={arrowBlue} alt="Manage" className="w-[12px] h-[12px] md:w-[14px] md:h-[14px]" style={{ filter: 'invert(45%) sepia(96%) saturate(2371%) hue-rotate(178deg) brightness(96%) contrast(97%)' }} />
             </button>
@@ -115,7 +115,7 @@ export default function Tanks() {
         {/* Tanks List */}
         <div className="flex flex-col gap-[16px] md:gap-[24px]">
           <div className="flex justify-between items-center px-[4px]">
-            <h3 id="sample-tank-list" tabIndex={-1} className="font-bold text-slate-900 text-[20px] md:text-[24px] leading-[28px]">Your Tanks</h3>
+            <h3 id="tank-list" tabIndex={-1} className="font-bold text-slate-900 text-[20px] md:text-[24px] leading-[28px]">Your Tanks</h3>
             <div className="flex items-center gap-[16px] md:gap-[24px]">
               <div className="hidden md:flex items-center gap-[12px] md:gap-[16px]">
                 <div className="flex items-center gap-[6px]">
@@ -149,7 +149,7 @@ export default function Tanks() {
                 <div role="status" aria-label="Loading data" className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
               </div>
             ) : error ? (
-              <div className="col-span-full py-10 text-center text-slate-500">{error}</div>
+              <div className="col-span-full"><RequestError message={error} onRetry={loadData} /></div>
             ) : displayTanks.length === 0 ? (
               <div className="col-span-full py-10 text-center text-slate-500">No tanks found.</div>
             ) : (

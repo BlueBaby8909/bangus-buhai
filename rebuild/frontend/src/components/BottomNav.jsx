@@ -13,7 +13,7 @@ export default function BottomNav() {
   return (
     <nav aria-label="Main navigation" className="fixed bottom-0 left-0 right-0 md:top-0 md:bottom-auto md:w-[240px] md:h-screen md:right-auto md:border-t-0 md:border-r bg-white/90 backdrop-blur-lg border-t border-slate-100 shadow-[0_-4px_24px_rgba(0,0,0,0.02)] flex md:flex-col justify-around md:justify-start items-center md:items-stretch h-[72px] px-2 md:px-[20px] md:pt-[32px] md:gap-[8px] z-50">
       
-      {/* Desktop Brand Logo Placeholder */}
+      {/* Desktop brand */}
       <div className="hidden md:flex items-center gap-[12px] px-[16px] mb-[32px]">
         <div className="bg-sky-600 w-[32px] h-[32px] rounded-lg shadow-[0_2px_10px_rgba(2,132,199,0.3)] flex items-center justify-center text-white font-bold text-[18px]">B</div>
         <span className="font-bold text-slate-900 text-[18px] tracking-tight">Bangus BuhAI</span>

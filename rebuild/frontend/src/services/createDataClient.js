@@ -2,7 +2,7 @@
 export const dataMethods = Object.freeze([
   'listTanks', 'listDevices', 'getTankSummary', 'getLatestPrediction',
   'getPredictionHistory', 'listWaterLogs', 'getAllLogs', 'listAlerts',
-  'createTank', 'updateTank', 'deleteTank', 'sendCommand',
+  'createTank', 'updateTank', 'deleteTank', 'createWaterLog', 'sendCommand',
 ])
 
 export class DataClientError extends Error {

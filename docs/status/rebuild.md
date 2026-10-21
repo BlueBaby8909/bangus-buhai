@@ -1,8 +1,12 @@
 # Rebuild status
 
-Updated: 2026-10-20 (frontend preparation; firmware handoff preserved). This page owns task states and the next task. Scope and finish conditions live in the [roadmap](../roadmap.md#task-list); product requirements live in the [PRD](../PRD.md). This is distinct from the [existing-code assessment](implementation.md).
+Updated: 2026-10-21 (frontend integration preparation; firmware handoff preserved). This page owns task states and the next task. Scope and finish conditions live in the [roadmap](../roadmap.md#task-list); product requirements live in the [PRD](../PRD.md). This is distinct from the [existing-code assessment](implementation.md).
 
 ## Current handoff
+
+- Frontend implementation preparation (2026-10-21): owner-authorized component/source consolidation preserves original design/assets, adds manual entry UI and guarded backend transport, excludes fixtures from production, and adds release/deployment preparation. Lint, 23 regression/rendering checks and build/distribution checks pass; unconfigured release is blocked. Browser localhost access timed out; backend/auth/live/deployed acceptance remains unverified. [Current frontend handoff](tasks/frontend-T16-T18-preparation.md#component-consolidation-and-backenddeployment-preparation--2026-10-21) owns details. T16-T18 remain incomplete; firmware T07 unchanged.
+
+- Frontend source review (2026-10-21): reviewed clean HEAD `c5e2486`; sample integration limits confirmed. Dashboard availability/connectivity/provenance and TankDetail request-lifecycle findings are recorded in the [frontend handoff](tasks/frontend-T16-T18-preparation.md#read-only-review--2026-10-21). No application changes or runtime checks; T16–T18 states and firmware T07 handoff unchanged.
 
 - Parallel frontend preparation (2026-10-20): original Dashboard/Tanks/Alerts/Data navigation and feature screens restored in `rebuild/frontend/` under the expanded request and library approval, with labelled sample forecast/history/chart/export/dialog/relay-preview flows. Latest preparation separates the sample provider behind a configurable facade and uses neutral product wording, an offline indicator and pH provenance; developer controls are hidden on normal routes. Live integration remains pending reviewed contracts. Lint/build, seven sample/provider regression tests and bounded browser checks passed. [Separate frontend handoff](tasks/frontend-T16-T18-preparation.md) owns evidence, limits, uncommitted files and the next integration step. T16–T18 remain incomplete; T07 remains the firmware collaborator's active task below.
 

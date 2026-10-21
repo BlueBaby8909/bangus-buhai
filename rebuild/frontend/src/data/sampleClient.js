@@ -57,4 +57,5 @@ export const api = {
   }),
   deleteTank: (id) => respond(() => { tanks = tanks.filter((tank) => tank.id !== id); notify(); return { sample_only: true } }),
   sendCommand: () => respond(() => ({ sample_only: true, sent: false })),
+  createWaterLog: () => Promise.reject(new Error('Manual entries require a connected backend.')),
 }

@@ -1,6 +1,6 @@
 # Rebuild workspace
 
-T01 provides a separate FastAPI backend, React/Vite frontend and firmware starting-point area. The backend currently serves only a health response; the frontend shows a static page. They do not exchange application data yet.
+T01 provides a separate FastAPI backend, React/Vite frontend and firmware starting-point area. The backend in this checkout currently serves only a health response. The frontend now preserves the original React screens with a backend adapter and production fixture exclusion; see [frontend setup](frontend/README.md), [integration handoff](frontend/INTEGRATION.md) and [deployment preparation](frontend/DEPLOYMENT.md). Live application integration remains unfinished.
 
 The existing prototype remains in the repository's top-level `backend/`, `frontend/` and `firmware/` directories. All commands below target `rebuild/`. T02 adds the [offline shared device contracts](contracts/README.md), independently of the application shells.
 
@@ -70,7 +70,7 @@ Open the [backend health endpoint](http://127.0.0.1:8001/health) and [frontend](
 {"status":"ok","service":"bangus-buhai-rebuild"}
 ```
 
-The frontend should show **Bangus Buhai Rebuild** and **The frontend workspace is running.** Stop a server with Ctrl+C in its terminal. No dependency installation or clean-install check is needed for normal daily startup.
+The frontend renders Dashboard/Tanks/Alerts/Data navigation. Without reviewed API configuration, data pages report service unavailability rather than showing fictional records. See [frontend setup](frontend/README.md) for the explicit development-only sample mode. Stop a server with Ctrl+C in its terminal. No dependency installation or clean-install check is needed for normal daily startup.
 
 ## Automated checks
 
@@ -146,7 +146,7 @@ For the frontend, stop its development server, run `npm ci`, then lint/build and
 | Backend packages | [backend/requirements.lock.txt](backend/requirements.lock.txt) | Install the recorded exact versions |
 | Frontend packages | [frontend/package-lock.json](frontend/package-lock.json) | Install with `npm ci` |
 
-These files are the supported configuration examples for this shell. The backend does not load `.env` files. Vite supports frontend `.env` files, but the static page consumes no custom environment variables. No `.env` file, database URL or broker credentials are required for T01.
+These files are the supported configuration examples for this shell. The backend does not load `.env` files. Vite supports frontend `.env` files; current public build variables and their limits are documented in [the frontend integration handoff](frontend/INTEGRATION.md). No `.env` file, database URL or broker credentials are required for T01.
 
 The frontend fails if its configured port is occupied instead of silently moving to another port. The backend also reports a bind failure on an occupied port. Stop the relevant rebuild server before restarting; leave prototype processes alone. The temporary backend check uses an explicit alternate port.
 

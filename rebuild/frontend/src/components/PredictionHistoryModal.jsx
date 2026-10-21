@@ -1,3 +1,5 @@
+import { RequestError } from "./RequestState.jsx";
+import { phProvenanceLabel, formatTimestamp } from "../presentation.js";
 import ModalFrame from './ModalFrame.jsx';
 import { useState, useEffect } from "react";
 import { api } from "../api/client";
@@ -6,6 +8,8 @@ export default function PredictionHistoryModal({ tankId, onClose }) {
   const [predictions, setPredictions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [revision,setRevision] = useState(0);
+  const retry = () => {setLoading(true);setError(null);setRevision(value=>value+1)};
 
   useEffect(() => {
     let mounted = true;
@@ -18,15 +22,15 @@ export default function PredictionHistoryModal({ tankId, onClose }) {
           setPredictions(sorted);
           setError(null);
         }
-      } catch {
-        if (mounted) setError("Failed to fetch prediction history.");
+      } catch (error) {
+        if (mounted) setError(error.message || "Failed to fetch prediction history.");
       } finally {
         if (mounted) setLoading(false);
       }
     }
     fetchHistory();
     return () => { mounted = false; };
-  }, [tankId]);
+  }, [tankId,revision]);
 
   return (
     <ModalFrame onClose={onClose} label="Forecast history">
@@ -50,7 +54,7 @@ export default function PredictionHistoryModal({ tankId, onClose }) {
             </div>
           ) : error ? (
             <div className="flex items-center justify-center h-full text-red-500 font-medium">
-              {error}
+              <RequestError message={error} onRetry={retry} />
             </div>
           ) : predictions.length === 0 ? (
             <div className="flex items-center justify-center h-full text-slate-500 font-medium">
@@ -60,13 +64,14 @@ export default function PredictionHistoryModal({ tankId, onClose }) {
             <div className="flex flex-col gap-[16px]">
               {predictions.map(pred => (
                 <div key={pred.id} className="border border-slate-100 rounded-[16px] p-[16px] hover:border-slate-200 hover:shadow-sm transition-all">
+                  <p className="text-xs text-amber-800 mb-3">{phProvenanceLabel(pred.ph_provenance)}</p>
                   <div className="flex justify-between items-center mb-[12px]">
                     <div className="flex items-center gap-[8px]">
                       <div className="bg-sky-500 w-[8px] h-[8px] rounded-full"></div>
                       <span className="font-bold text-slate-900 text-[14px]">Forecast Generated</span>
                     </div>
                     <span className="text-[12px] font-medium text-slate-500">
-                      {new Date(pred.created_at).toLocaleString()}
+                      {formatTimestamp(pred.created_at)}
                     </span>
                   </div>
                   

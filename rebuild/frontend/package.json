@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "oxlint",
+    "build:release": "node scripts/check-release.mjs && vite build && node scripts/check-dist.mjs",
+    "check:dist": "node scripts/check-dist.mjs",
+    "lint": "oxlint --deny-warnings src scripts vite.config.js",
+    "test": "node --test scripts/*.test.mjs",
     "check:samples": "node --test scripts/sample-adapter.test.mjs",
     "preview": "vite preview"
   },

@@ -9,6 +9,8 @@ import imgIcon4 from "../assets/DashBoard/Temp(Orange).svg";
 import imgIcon5 from "../assets/DashBoard/Ph(Blue).svg";
 import imgIcon6 from "../assets/DashBoard/Turb(Gray).svg";
 import ReadingStatus from "../components/ReadingStatus.jsx";
+import { availableMetricCount, connectionLabel, phProvenanceLabel } from '../presentation.js';
+import { LoadingState, RequestError } from '../components/RequestState.jsx';
 
 export default function Dashboard() {
   const [firstTank, setFirstTank] = useState(null);
@@ -16,6 +18,7 @@ export default function Dashboard() {
   const [latestLog, setLatestLog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [reload, setReload] = useState(0);
 
   useEffect(() => {
     let mounted = true;
@@ -31,14 +34,15 @@ export default function Dashboard() {
           setFirstTank(tank);
           const summary = await api.getTankSummary(tank.id);
           if (!mounted) return;
+          setFirstTank(summary.tank);
           setLatestLog(summary.latest_water_log);
-          const device = devices.find((d) => d.tank_id === tank.id);
+          const device = devices.find((d) => String(d.tank_id) === String(tank.id));
           setFirstDevice(
-            device || { name: "Unknown Device", is_online: false },
+            device || { name: "No device assigned", connection_state: 'unknown' },
           );
         }
-      } catch {
-        if (mounted) setError("Failed to load dashboard data.");
+      } catch (error) {
+        if (mounted) setError(error.message || "Failed to load dashboard data.");
       } finally {
         if (mounted) setLoading(false);
       }
@@ -47,7 +51,7 @@ export default function Dashboard() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [reload]);
 
   const displayLog = {
     temp: latestLog?.temperature?.toFixed(1) ?? "--",
@@ -57,53 +61,25 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="bg-slate-50 flex flex-col min-h-screen items-center justify-center">
-        <div role="status" aria-label="Loading data" className="w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
+      <><AppHeader title="Hatchery Monitor" /><LoadingState /></>
     );
   }
 
   if (error || !firstTank) {
     return (
-      <div className="bg-slate-50 flex flex-col min-h-screen p-10 items-center justify-center">
-        <p className="text-slate-500">
-          {error || "No tanks yet. Add a tank from the Tanks page."}
-        </p>
-      </div>
+      <><AppHeader title="Hatchery Monitor" />{error ? <RequestError message={error} onRetry={() => {setLoading(true);setError(null);setReload(value => value + 1)}} /> : <div className="p-10 text-center text-slate-500">No tanks yet. <Link className="text-sky-700 underline" to="/tanks">Add your first tank</Link>.</div>}</>
     );
   }
 
   return (
     <div className="bg-slate-50 flex flex-col min-h-screen">
-      <AppHeader
-        title="Hatchery Monitor"
-        leftNode={
-          <div className="bg-white rounded-full p-[8px] md:p-[10px] shadow-sm border border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="md:w-[24px] md:h-[24px]"
-            >
-              <path
-                d="M3 12H21M3 6H21M3 18H21"
-                stroke="#64748b"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-        }
-      />
+      <AppHeader title="Hatchery Monitor" />
       <div className="flex-1 w-full pb-[32px] pt-[24px] px-[16px] md:px-[40px] md:py-[40px] flex flex-col gap-[24px] md:gap-[40px]">
         {/* Header Section */}
-        <div className="sample-dashboard-greeting flex flex-col md:flex-row md:items-center md:justify-between gap-[16px]">
+        <div className="dashboard-greeting flex flex-col md:flex-row md:items-center md:justify-between gap-[16px]">
           <div className="flex flex-col">
             <h2 className="font-bold text-slate-900 text-[26px] md:text-[36px] leading-[30px] md:leading-[40px] tracking-[-0.5px]">
-              Hello, Manager
+              Hatchery Overview
             </h2>
             <p className="text-slate-500 text-[14px] md:text-[16px] leading-[20px] md:leading-[24px] mt-1 md:mt-2">
               Bangus BuhAI water quality at a glance.
@@ -141,7 +117,7 @@ export default function Dashboard() {
         <ReadingStatus tank={firstTank} />
 
         {/* Dashboard Content Grid */}
-        <div className="sample-dashboard-grid flex flex-col md:grid md:grid-cols-2 md:gap-[32px] gap-[24px]">
+        <div className="dashboard-grid flex flex-col md:grid md:grid-cols-2 md:gap-[32px] gap-[24px]">
           {/* Primary Tank */}
           <div className="flex flex-col gap-[12px] md:gap-[20px]">
             <div className="flex justify-between items-center">
@@ -175,7 +151,7 @@ export default function Dashboard() {
                       <span
                         className={`w-[8px] h-[8px] rounded-full ${firstDevice?.is_online ? "bg-sky-500" : "bg-slate-300"}`}
                       ></span>
-                      {firstDevice?.is_online ? "Connected" : "Disconnected"}
+                      {connectionLabel(firstDevice)}
                     </p>
                   </div>
                   <div className="bg-sky-50 rounded-[16px] w-[48px] h-[48px] md:w-[56px] md:h-[56px] flex items-center justify-center group-hover:bg-sky-100 transition-colors">
@@ -197,7 +173,7 @@ export default function Dashboard() {
                       Parameters
                     </p>
                     <p className="font-bold text-sky-600 text-[48px] md:text-[56px] leading-[48px] md:leading-[56px] tracking-[-1.2px] mt-1 md:mt-2">
-                      3{" "}
+                      {availableMetricCount(latestLog)}{" "}
                       <span className="text-[24px] md:text-[28px] text-slate-300">
                         / 3
                       </span>
@@ -212,7 +188,7 @@ export default function Dashboard() {
               </div>
               <div className="px-[24px] md:px-[32px] pb-[24px] md:pb-[32px] pt-[8px] md:pt-[12px] relative z-10">
                 <div className="bg-slate-100 h-[8px] md:h-[10px] rounded-full w-full overflow-hidden">
-                  <div className="bg-sky-500 h-full w-[100%] rounded-full"></div>
+                  <div className="bg-sky-500 h-full rounded-full" style={{width: `${availableMetricCount(latestLog) / 3 * 100}%`}}></div>
                 </div>
               </div>
             </Link>
@@ -261,7 +237,7 @@ export default function Dashboard() {
                     }}
                   />
                   <span className="bg-sky-50 text-sky-700 text-[11px] md:text-[13px] font-bold px-[10px] md:px-[12px] py-[4px] md:py-[6px] rounded-full">
-                    {latestLog?.pH == null ? "pH unavailable" : latestLog.ph_provenance === "estimated" ? "Estimated pH" : "Default pH"}
+                    {latestLog?.pH == null ? "pH unavailable" : phProvenanceLabel(latestLog.ph_provenance)}
                   </span>
                 </div>
                 <div className="flex flex-col z-10 mt-auto">
