@@ -8,6 +8,8 @@ Task router for humans and AI tools. Start with [AGENTS.md](AGENTS.md); product 
 
 ## Parallel frontend collaboration
 
+2026-10-21 publication: frontend implementation committed as `9d49b57` and successfully pushed to `origin/kyle` at the owner's request. The [frontend handoff](docs/status/tasks/frontend-T16-T18-preparation.md#github-publication--2026-10-21) records the result; backend integration and production acceptance remain unfinished.
+
 2026-10-21 implementation: owner authorized frontend consolidation and integration/deployment preparation while a teammate builds the backend. Active screens now use standard source folders; production excludes fixtures. Shared components, manual entry UI, guarded HTTP requests, retries and release configuration checks are implemented. Backend/auth/live integration and browser/deployment acceptance remain unfinished. See the [current frontend handoff](docs/status/tasks/frontend-T16-T18-preparation.md#component-consolidation-and-backenddeployment-preparation--2026-10-21). No backend/firmware/Git publication changes.
 
 2026-10-21: read-only source review at `c5e2486` confirmed sample mode and identified Dashboard availability/connectivity/provenance and tank-detail request-lifecycle issues. Findings and the next guided step are in the [frontend handoff](docs/status/tasks/frontend-T16-T18-preparation.md#read-only-review--2026-10-21); no application edits or runtime checks were performed.

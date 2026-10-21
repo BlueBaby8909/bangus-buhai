@@ -4,6 +4,8 @@ Updated: 2026-10-21 (frontend integration preparation; firmware handoff preserve
 
 ## Current handoff
 
+- Frontend publication (2026-10-21): owner-requested commit `9d49b57` successfully pushed to `origin/kyle`. See [publication evidence](tasks/frontend-T16-T18-preparation.md#github-publication--2026-10-21). This does not change T16-T18 acceptance or the firmware T07 handoff.
+
 - Frontend implementation preparation (2026-10-21): owner-authorized component/source consolidation preserves original design/assets, adds manual entry UI and guarded backend transport, excludes fixtures from production, and adds release/deployment preparation. Lint, 23 regression/rendering checks and build/distribution checks pass; unconfigured release is blocked. Browser localhost access timed out; backend/auth/live/deployed acceptance remains unverified. [Current frontend handoff](tasks/frontend-T16-T18-preparation.md#component-consolidation-and-backenddeployment-preparation--2026-10-21) owns details. T16-T18 remain incomplete; firmware T07 unchanged.
 
 - Frontend source review (2026-10-21): reviewed clean HEAD `c5e2486`; sample integration limits confirmed. Dashboard availability/connectivity/provenance and TankDetail request-lifecycle findings are recorded in the [frontend handoff](tasks/frontend-T16-T18-preparation.md#read-only-review--2026-10-21). No application changes or runtime checks; T16–T18 states and firmware T07 handoff unchanged.

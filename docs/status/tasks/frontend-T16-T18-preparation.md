@@ -1,5 +1,12 @@
 # Frontend preparation for T16–T18: tank displays
 
+## GitHub publication — 2026-10-21
+
+- Owner explicitly requested pushing this frontend work to `kyle` on GitHub. AI verified the existing `kyle` branch tracked `origin/kyle` at `c5e2486`; fetching confirmed no divergence.
+- AI committed the reviewed frontend changes and associated documentation as `9d49b57` (`refactor(frontend): consolidate components and harden backend integration`) and successfully pushed `origin HEAD:refs/heads/kyle` to `https://github.com/BlueBaby8909/bangus-buhai.git`. Git reported `c5e2486..9d49b57 HEAD -> kyle` with exit 0. No force push, merge or teammate branch changes.
+- Staged review recognized the asset/source moves; trailing whitespace in two moved tank dialogs was removed before commit. Staged whitespace check passed. Previously recorded lint, 23 tests and build/distribution results still apply; no behavioral changes were made for publication.
+- This documentation follow-up records the actual source commit/push. Earlier uncommitted/no-push statements below describe prior checkpoints. Next integration step and T16-T18 limitations remain unchanged; deployment was not performed.
+
 ## Component consolidation and backend/deployment preparation — 2026-10-21
 
 - **Authorization and plan:** owner explicitly asked AI to implement the discussed component cleanup, preserve the root UI/design, remove placeholders and prepare backend/deployment integration. Owner then reported a teammate is implementing the backend on another branch and left frontend integration decisions to AI discretion. AI explained the scope and backend limitations before editing. No backend branch, firmware/cloud state, staging, commit, push or other chat was touched.
