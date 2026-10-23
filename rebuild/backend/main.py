@@ -1,8 +1,7 @@
-from fastapi import FastAPI
+from backend.core.application import create_app
 
-app = FastAPI(title="Bangus Buhai Rebuild")
+app = create_app()
 
 @app.get("/health")
-
 def health():
     return {"status": "ok", "service": "bangus-buhai-rebuild"}

@@ -594,7 +594,10 @@ static void start_scan(const manager_event_t *event)
     wifi_scan_config_t config = {
         .show_hidden = true,
         .scan_type = event->passive ? WIFI_SCAN_TYPE_PASSIVE : WIFI_SCAN_TYPE_ACTIVE,
-        .scan_time = {.active = {.min = event->period_ms, .max = event->period_ms}}
+        .scan_time = {.active = {
+            .min = WIFI_ACTIVE_SCAN_MIN_DEFAULT_TIME,
+            .max = WIFI_ACTIVE_SCAN_MAX_DEFAULT_TIME
+        }}
     };
     if (event->passive) { config.scan_time.passive = event->period_ms; }
     if (ret == ESP_OK) { ret = esp_wifi_scan_start(&config, false); }

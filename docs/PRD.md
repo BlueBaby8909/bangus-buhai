@@ -1,6 +1,6 @@
 # Bangus Buhai product requirements
 
-Revision: 2026-10-16 production-software rebuild scope. Authority: this file. Source-review baseline remains 2026-10-15, Git `785e08b` plus the local cleanup reviewed then; this scope revision is not a new runtime or hardware audit and does not certify release readiness.
+Revision: 2026-10-21 ownership clarification for T09, following the 2026-10-16 production-software rebuild scope. Authority: this file. Source-review baseline remains 2026-10-15, Git `785e08b` plus the local cleanup reviewed then; this scope revision is not a new runtime or hardware audit and does not certify release readiness.
 
 ## 1. Product vision and scope
 
@@ -12,7 +12,7 @@ The owner confirmed ESP-IDF as the active firmware and an unloaded relay used fo
 
 Owner-confirmed on 2026-10-16; rationale is in [decision 0003](decisions/0003-first-production-software-release.md).
 
-- Serve a small group of real operators at one milkfish hatchery, targeting the larvae stage. Authentication, role permissions, and tank/device ownership remain required under R16-R17. Multi-farm rollout is a later milestone; using one farm does not waive access-control verification.
+- Serve a small group of real operators at one milkfish hatchery, targeting the larvae stage. Authentication, operator membership and tank/device ownership remain required under R16-R17. All operators have equal access within their assigned hatcheries; the owner provisions accounts through trusted tooling. Multi-farm rollout is a later milestone; using one farm does not waive access-control verification.
 - Keep the current prototype hardware and ESP-IDF baseline while rebuilding the software. Hardware upgrades are outside this release. The relay remains unloaded for visual demonstration under R14; connected temperature-control equipment under R15 is deferred to a later hardware milestone.
 - Preserve explicit pH provenance under R03/R07/R08/R10/R12. Default or estimated pH must not be presented as physical measurement or validated prediction evidence. Physical pH integration remains future scope under R22.
 - Require evidence for applicable reliability, data integrity, access control, encrypted transport, deployment, monitoring, recovery, and verification requirements under R01-R21. The existing requirement table continues to define their behavior; a software-first milestone is not a waiver of unfinished software requirements.
@@ -30,6 +30,79 @@ The owner does not yet know tank/operator counts or site connectivity conditions
 - [Inference](../backend/ml/inference.py) returns four recursively generated outputs named `hour_1` through `hour_4`. Their hourly interpretation is not verified. A stored model is evidence of an artifact, not validated forecasting performance.
 
 The [implementation assessment](status/implementation.md) owns the detailed, dated evidence and defects. The following requirements remain targets even when the source does not satisfy them.
+
+### T12 reading-history clarification
+
+Owner-confirmed 2026-10-21 for R07/R09/R10; see
+[decision 0009](decisions/0009-reading-history-and-manual-measurements.md).
+Device captures remain immutable with their original binding and nullable capture
+time. Receipt time never substitutes for capture time. Manual entries are actual
+operator-reported measurements, with at least one finite temperature/pH/turbidity
+value and explicit missing metrics. They do not certify calibration or biological
+safety. Require a timezone-aware measurement time with a five-minute future-clock
+tolerance. Estimates are not accepted through manual measurement entry.
+
+For rebuild water-log CRUD/history below, correction, deletion and restoration
+mean append-only manual revisions with expected version, actor, server time and
+reason; there is no permanent reading deletion or device-event editing. Tank,
+original author and receipt time remain fixed. All active hatchery operators have
+equal rights. Archived tanks allow history reads but block manual writes until
+restored. Reading history uses an explicit measured/received time basis and stable
+snapshot pagination. T12 supplies protected backend APIs; frontend forms, history
+and export retain their later milestones. Historical prototype API descriptions
+below do not override these rebuild rules.
+
+### T13 ingestion clarification
+
+Owner-confirmed 2026-10-21 for R05–R09/R16–R18; see
+[decision 0010](decisions/0010-mqtt-ingestion-and-quarantine.md). Deliver the backend
+slice using generated credentials, simulated devices and an isolated test broker.
+Real ESP32/HiveMQ acceptance still requires verified firmware proof, durable runtime
+binding/configuration confirmation and dedicated backend broker permissions.
+The test broker does not replace HiveMQ as the selected live service.
+
+Readings enter normal history only through verified identity, retained ownership,
+confirmed binding and capture-window admission. Closed bindings require synchronized
+capture within [assignment start,end); unknown capture time remains null and is
+admissible only under an active confirmed binding. Never rewrite queued events to
+a current tank or infer capture time. Quarantine uncertain/conflicting validated
+events separately, with bounded storage, without sending a success ACK. Device
+queue-head retries may delay subsequent readings; no fake ACK may bypass that.
+
+Application stored/duplicate ACKs follow successful database commit. Lost ACKs
+recover through immutable event identity and retries; changed content never
+overwrites history. New command results lacking authorized command context remain
+quarantined until T14. Live ingestion defaults disabled; local checks do not qualify
+broker/cloud, hardware, deployed capacity or T07's remaining evidence gaps.
+
+### T13A real-device and quarantine-custody clarification
+
+Owner-confirmed 2026-10-21; see [decision 0011](decisions/0011-real-device-onboarding-and-quarantine-custody.md).
+The ESP32 must prove its credential, persist/read back its assigned configuration
+and confirm its exact version before newly assigned captures are enabled. Keep
+existing queued event attribution immutable. A previously confirmed saved binding
+supports offline capture after reboot.
+
+In addition to normal stored/duplicate ACKs, a separate quarantine custody receipt
+may release the exact pending device copy after validated content is durably
+retained in quarantine. This is not accepted tank history. Require verified device
+ownership, a committed quarantine record and an exact payload hash/identity match.
+No receipt follows invalid input, capacity refusal or database failure. Qualify
+backend-only publication and device-scoped subscription on the actual broker.
+Operator Add device screens are explicitly T18; T13A uses trusted test tooling.
+
+### T14 relay command clarification
+
+Owner-approved 2026-10-22; [decision 0012](decisions/0012-relay-command-lifecycle.md).
+R14/R17 include protected manual ON/OFF and explicit return to AUTO. API acceptance,
+publication, device acceptance/application, rejection/failure and timeout are distinct.
+Commands expire after 60 seconds and retry unchanged IDs every five seconds; expiry
+limits delivery rather than manual-mode duration. Timeout means unknown outcome;
+late legitimate results may resolve it while preserving timeout evidence. Durable
+deduplication/result ACKs and correlated relay-owner completion must prevent duplicate
+actuation and false success. Reboot does not resume pending remote commands. Preserve
+the T06 safety/manual/AUTO policy, unloaded hardware boundary and truthful GPIO-only
+state evidence. Browser controls remain T18; T07 declined checks/BOOT deferral remain.
 
 ## 3. Requirements and acceptance criteria
 
@@ -52,8 +125,8 @@ The [implementation assessment](status/implementation.md) owns the detailed, dat
 | R13 | Product | Maintain versioned model weights, scaler, metadata, feature order, training assumptions, and reproducible evaluation evidence. PyTorch LSTM is the selected inference family; the current architecture is described in reference material, not a proof of accuracy. | [Q03](research/open-questions.md#q03-model-provenance) |
 | R14 | Prototype | Support unloaded relay ON/OFF demonstration, MQTT commands, active-low actuation, and truthful telemetry/UI state. Manual commands and automatic logic must have an explicit ownership policy. Stale temperature must force a reliable OFF state. | [S08](status/implementation.md#s08-relay-control) |
 | R15 | Production | Integrate temperature-control equipment with hysteresis, anti-chatter behavior, configurable thresholds, and safe failure behavior. Retain the legacy proposed ON >=32.5 C / OFF <=31.0 C thresholds as a design requiring actuator/domain confirmation before connection; do not interpret them as approved heater behavior. | [Q04](research/open-questions.md#q04-connected-relay-equipment) |
-| R16 | Product / Production | Provide user accounts and enforce exclusive tank/device ownership. Support secure claiming/pre-registration for production using device identity and proof of possession, with certificate/API-key provisioning as designed. Broker messages must not grant ownership solely through self-reported tank IDs. | [S09](status/implementation.md#s09-production-and-verification) |
-| R17 | Production | Require API authentication (OAuth2/JWT), admin/operator/viewer authorization, tenant isolation, validation, rate limiting, HTTPS/WSS, securely managed credentials, and unique-device mutual TLS for MQTT. Confirm the selected broker plan can satisfy the device-certificate requirement. Production provisioning must not rely on a publicly derivable MAC-based secret. | [Q05](research/open-questions.md#q05-production-security-and-hosting) |
+| R16 | Product / Production | Provide owner-provisioned user accounts with one application role, operator, and equal access within each active hatchery membership. Public registration does not provision application access. Each tank/device belongs exclusively to one hatchery. A tank may have several devices; a device has at most one active tank assignment, with historical bindings retained. Operators may claim prepared devices using a private claim code and proof of the trusted device credential; device preparation occurs once before distribution. Track server assignment separately from confirmed device configuration. Archive resources while retaining ownership/history; restoration must not recreate prior assignments. Broker messages must not grant ownership solely through self-reported tank IDs. | [Ownership decision](decisions/0006-database-ownership-and-bindings.md), [Account decision](decisions/0007-operator-authentication.md), [Claiming decision](decisions/0008-self-service-device-claiming.md), [S09](status/implementation.md#s09-production-and-verification) |
+| R17 | Production | Require API authentication backed by Supabase email/password and verified asymmetric JWTs, with provider tokens held server-side and opaque protected browser sessions. Enforce eight-hour absolute and 30-minute authenticated-request inactivity limits, immediate local revocation/disable, operator membership authorization, tenant isolation, validation, rate limiting, origin/CSRF protection, HTTPS/WSS, securely managed credentials, and unique per-device MQTT authentication over server-verified TLS, with a separate restricted backend identity. The owner-approved Starter path uses independent random device/backend passwords and distinct roles; certificate MQTT remains an alternative only with verified permission isolation. Device signing keys remain required for HTTPS claiming/configuration proofs. Provider refresh alone must not extend application session limits. See [decision 0011](decisions/0011-real-device-onboarding-and-quarantine-custody.md) for the approved MQTT adjustment. Production provisioning must not rely on a publicly derivable MAC-based secret. | [Account decision](decisions/0007-operator-authentication.md), [Q05](research/open-questions.md#q05-production-security-and-hosting) |
 | R18 | Production | Use a containerized backend, static frontend hosting, PostgreSQL with connection pooling, automated tests/deployment, environment configuration, and operational logging/metrics/health checks. HiveMQ Cloud replaces a self-hosted broker requirement. | [S09](status/implementation.md#s09-production-and-verification) |
 | R19 | Product / Production | Preserve OTA-capable layout, watchdog reset behavior, coredump capability, network recovery, and offline buffering. Production must implement the update/confirmation/rollback workflow, not just allocate partitions. The documented baseline is 8 MB flash with two 1.5 MiB OTA slots; actual hardware and binary headroom require verification. | [Q06](research/open-questions.md#q06-hardware-and-build-evidence) |
 | R20 | Production | Provide durable alert history, acknowledgement, notification channels such as SMS/email, database backup/restore, and tested recovery procedures. These remain future requirements, not claims about the prototype. | [S09](status/implementation.md#s09-production-and-verification) |

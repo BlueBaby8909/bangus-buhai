@@ -6,6 +6,20 @@ T02 adds explicit per-metric sample/last-valid ages, unknown-age `unverified` ha
 
 ## Identity, ownership and compatibility
 
+T11 update: the [registry guide](../../rebuild/backend/features/registry/README.md)
+now specifies the implemented HTTP management/claim/proof/configuration protocol,
+accepted in [decision 0008](../decisions/0008-self-service-device-claiming.md).
+Existing T02 MQTT schemas remain unchanged; real firmware claiming and MQTT
+admission are not established by simulated HTTP device tests.
+
+T13 backend update: [decision 0010](../decisions/0010-mqtt-ingestion-and-quarantine.md)
+and the [ingestion guide](../../rebuild/backend/mqtt/README.md) now specify retained
+confirmation evidence, binding capture-window admission, commit-before-ACK and
+bounded immutable quarantine. Local generated-certificate broker integration does
+not establish real ESP32/HiveMQ qualification. MQTT schemas stay unchanged; new
+command results await authorized T14 command context. Unknown/uncertain capture
+times must never be assigned to the current tank or a guessed time window.
+
 - Preserve the canonical external ID `BB-` followed by 12 uppercase MAC hex characters. It is not an authentication secret. API device paths, MQTT topic and payload agree on it; a database row ID is a different identifier.
 - Enrollment binds a broker-authenticated device to this ID and an authorized server-side registry entry. Broker ACLs restrict publication/subscription to that identity's topics; backend subscription messages alone do not expose the publisher's certificate for independent identity checks.
 - A server-issued `binding_id` identifies an immutable device/tank/owner assignment. Telemetry cannot assign ownership or create/reassign a tank. Capture queues retain the original binding. Late historical events require a retained authorized binding and an admissible capture window; otherwise quarantine instead of assigning them to the current tank.
@@ -93,10 +107,10 @@ Propose `/api/v1` with typed request/response schemas and consistent errors. Con
 
 | Surface | Proposed operations/behavior |
 |---|---|
-| Identity | Authentication integration, `GET /me`, session lifecycle and role context; provider/library/browser-session transport finalized before implementation |
-| Tanks | CRUD and summary under `/tanks`; every access scoped by server-side grants; reference protected history rather than cascading destructive deletion blindly |
-| Devices | Verified enrollment/claim, list/detail and binding lifecycle; canonical device ID paths; proof of possession is not a public MAC-derived value |
-| Readings | `/tanks/{tank_id}/readings` list/manual-create and scoped correction/deletion semantics preserving audit history; typed provenance, capture/receipt time, validity and server evaluation |
+| Identity | T10 implements POST `/api/v1/auth/login`, GET `/api/v1/me`, POST `/api/v1/auth/logout`, opaque browser cookies and one operator role under decision 0007; the T10 record distinguishes local checks from live-provider verification |
+| Tanks | T11 implements hatchery-scoped create/list/detail/rename/archive/restore with version checks; reading summaries remain later tasks |
+| Devices | T11 implements trusted preparation, operator claim APIs, device challenge/proof/configuration confirmation, list/detail and retained binding lifecycle; see decision 0008 and the registry protocol guide. Real firmware/client onboarding remains a follow-up |
+| Readings | T12 implements hatchery/tank-scoped `/readings` list/detail and `/manual-readings` create/correct/void/restore/revisions, with measured-only manual provenance and signed snapshot cursors; [decision 0009](../decisions/0009-reading-history-and-manual-measurements.md) and [API guide](../../rebuild/backend/features/readings/README.md). Device events stay immutable; quality evaluation remains later work |
 | Commands | `POST /devices/{device_id}/commands`; query persistent command/result status by command ID; idempotency key and ownership checks |
 | Forecasts | Create/history/latest with origin time, target time per horizon, model/scaler/policy provenance and documented confidence semantics; explicit insufficient/unvalidated states |
 | Alerts | Durable history/detail/acknowledgement scoped to accessible tanks; notification dispatch status separate from alert state |
@@ -106,9 +120,18 @@ Propose `/api/v1` with typed request/response schemas and consistent errors. Con
 
 Reading history has a deterministic total order, explicit time basis and stable cursor. Default measured-history order is capture time plus immutable ID; unknown-capture records use a separate received-time view/explicit null-time treatment. No mixing guessed timestamps into chronological model inputs. Use bounded pagination; export cannot imply full history when it only fetched a page.
 
+T12 resolves this reading slice: newest-first order is selected time, origin and
+immutable reading ID. Signed cursors preserve a committed journal watermark and
+the latest manual revision at that point. Partial manual measurements are labelled
+operator-reported; device source/validity/age and payload remain unchanged. Unknown
+capture times remain null in the explicit receipt-time view. Revisions audit
+correction/void/restoration; archived tanks allow reads only until restored.
+Broader source proposals above do not authorize estimated manual inputs or server
+biological classifications before their own tasks.
+
 Errors use a stable machine code, human-readable message, request ID and safe validation details, with appropriate HTTP status. Never trust caller-supplied owner/farm fields as authorization. Authenticate/authorize live subscriptions before data delivery and re-evaluate access on expiry/revocation. Cursor gaps/retention expiry trigger resynchronization, not silent dropped history. Retention, replay windows, heartbeat, rate/size limits and numerical budgets must be finalized and tested.
 
-R16 ownership interpretation and authentication integration remain pending in the [architecture proposal](rebuild-architecture.md). Proposed defaults do not waive access controls or turn an unavailable forecast into a successful prediction. Numerical hatchery thresholds and model evaluation remain Q02/Q01/Q03 evidence questions.
+R16's hatchery ownership interpretation is accepted in the [T09 database decision](../decisions/0006-database-ownership-and-bindings.md). Supabase/operator browser authentication is accepted in [decision 0007](../decisions/0007-operator-authentication.md), with implementation and live-check status in [T10](../status/tasks/T10.md). MQTT admission remains T13. Proposed defaults do not waive access controls or turn an unavailable forecast into a successful prediction. Numerical hatchery thresholds and model evaluation remain Q02/Q01/Q03 evidence questions.
 
 ## Verification matrix before implementation acceptance
 

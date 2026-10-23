@@ -723,6 +723,20 @@
       "reference": "valid/telemetry-default-ph.json",
       "reference_topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/telemetry",
       "expected_error": "correlation_mismatch"
+    },
+    {
+      "operation": "message",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd",
+      "id": "command-relay-auto",
+      "file": "valid/command-relay-auto.json",
+      "expected_result": "command"
+    },
+    {
+      "operation": "message",
+      "topic": "bangusbuhai-rebuild/devices/BB-AABBCC112233/cmd",
+      "id": "command-auto-with-target",
+      "file": "invalid/command-auto-with-target.json",
+      "expected_error": "invalid_schema"
     }
   ]
 }

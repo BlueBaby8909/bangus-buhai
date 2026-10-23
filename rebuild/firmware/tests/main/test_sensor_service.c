@@ -212,9 +212,15 @@ static void test_snapshot_access_during_conversion(void)
 
 void app_main(void)
 {
+    extern void run_t08_tests(void);
+    extern void run_t13a_tests(void);
+    extern void run_t14_tests(void);
     UNITY_BEGIN();
     RUN_TEST(test_snapshot_lifecycle);
     RUN_TEST(test_snapshot_access_during_conversion);
     run_t06_tests();
+    run_t08_tests();
+    run_t13a_tests();
+    run_t14_tests();
     UNITY_END();
 }

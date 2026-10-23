@@ -1,5 +1,64 @@
 # Sensor-service regression app
 
+## Current T13A suite: 26 cases, owner rerun PASS
+
+The first owner run reported four failures. After correcting JSON boolean parsing
+and the verification test public-key import, the owner reran the offline suite:
+26 Tests 0 Failures 0 Ignored, OK (attachment 996ef3bf, ELF c9343bd78). AI also
+validated its three actual C telemetry payloads against the shared contracts.
+Real claiming/persistent NVS and HiveMQ still need the normal-firmware checkpoints.
+
+The existing 18 cases plus eight T13A configuration/signing/custody/binding tests
+now build successfully. Expected runtime summary is `26 Tests 0 Failures 0 Ignored`.
+The test image uses a 12 KiB main stack and 8 MiB flash header; existing normal
+partition offsets/storage stay unchanged. Use `idf.py -p COM11 app-flash monitor`,
+never this test project's full flash or erase-flash. NVS remains simulated.
+Restore the normal application after checkpoint A. See
+[the T13A guide](../components/device_setup/README.md) for ordered checkpoints.
+The older T08 evidence below remains historical, not proof of these new tests.
+
+
+## T08 extension (execution pending)
+
+The suite now contains 18 named cases: the existing eight plus ten T08 cases for
+immutable replay/reboot, UTC/quality serialization, newest-16 overflow/lost ACK,
+strict acknowledgement parsing/correlation, fragmented/retained ACK handling,
+power-interrupted full-queue replacement, interrupted ACK removal, storage
+corruption/failure, monotonic scheduling and invalid-snapshot rejection.
+
+T08 tests wrap NVS APIs with an in-memory model. Each replacement/removal mutation
+is interrupted both before and after its atomic key update/commit; recovery must
+retain a coherent old or new queue. The tests never initialize/erase real board
+NVS or send real broker acknowledgements. This does not prove physical flash
+behavior or database ingestion. Three actual C-serialized payloads print as
+`T08_WIRE_JSON:...` for subsequent validation using the existing Python contracts.
+
+From this test directory, the owner builds and then runs the application only:
+
+```powershell
+idf.py build
+idf.py -p COM11 app-flash monitor
+```
+
+Use app-only flashing to keep the normal 8 MiB bootloader and partition table;
+the test project retains its earlier flash configuration. Expected result after
+execution is `18 Tests 0 Failures 0 Ignored`, `OK`. On 2026-10-21 the owner
+ran the suite successfully after adding the missing direct `nvs_flash` test
+dependency: all 18 cases PASS, zero failures/ignored (ELF `ef47d7233`). AI reviewed
+attachment `365daac8-6942-48f3-9e11-c27e7ca34d68/Pasted text.txt` and validated all
+three emitted payloads with the accepted Python wire contracts: 3/3 PASS. Storage
+error logs in this suite are deliberate fake-NVS fault injection, not real flash
+damage. Restore the normal app from the parent firmware directory afterward:
+
+```powershell
+cd ..
+idf.py -p COM11 app-flash monitor
+```
+
+For the **first normal T08 installation**, use the normal project's full
+`build flash monitor` command so its new telemetry partition table is installed.
+Do not erase flash. See the normal firmware README for the installation order.
+
 ## Current T06 extension (eight tests passed)
 
 On 2026-10-17 the owner supplied a successful test-app build (`0x2d320` image,
@@ -74,3 +133,17 @@ building the normal sensing application.
 The subsequent owner-requested two-page LCD layout changes the existing display assertions. The earlier eight-test PASS predates that formatting change; owner rebuild/rerun is pending.
 
 Owner subsequently reran the suite after the final degrees C / NTU / unitless pH and relay AUTO/MANUAL display change: all eight named tests PASS, 8 Tests 0 Failures 0 Ignored, OK. AI reviewed pasted output. This supersedes the layout regression-pending notes above; physical relay ON/fault transitions and task/queue scheduling remain outside these tests.
+
+## T14 regression checkpoint
+
+The test application now registers 34 cases, including eight new command cases.
+T14's control requests/completions and NVS bb_cmd namespace are mocked. It emits
+T14_WIRE_JSON lines for independent shared-contract checking. Firmware builds do
+not count as execution. From this folder in ESP-IDF PowerShell, the owner runs:
+
+```powershell
+idf.py -p COM11 app-flash monitor
+```
+
+Supply the final Unity summary and emitted wire lines. Restore the normal app-only
+image at the guided next checkpoint; do not run erase-flash or change partitions.

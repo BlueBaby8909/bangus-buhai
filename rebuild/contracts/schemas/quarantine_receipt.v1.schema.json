@@ -1,0 +1,72 @@
+{
+  "$id": "urn:bangusbuhai:device:v1:quarantine_receipt",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Durable quarantine custody, never an acknowledgement of tank history.",
+  "properties": {
+    "boot_id": {
+      "maxLength": 36,
+      "minLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "title": "Boot Id",
+      "type": "string"
+    },
+    "device_id": {
+      "maxLength": 15,
+      "minLength": 15,
+      "pattern": "^BB-[0-9A-F]{12}$",
+      "title": "Device Id",
+      "type": "string"
+    },
+    "event_kind": {
+      "const": "telemetry",
+      "title": "Event Kind",
+      "type": "string"
+    },
+    "payload_sha256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Payload Sha256",
+      "type": "string"
+    },
+    "quarantine_id": {
+      "maxLength": 36,
+      "minLength": 36,
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "title": "Quarantine Id",
+      "type": "string"
+    },
+    "reason": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "title": "Reason",
+      "type": "string"
+    },
+    "schema_version": {
+      "maximum": 1,
+      "minimum": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "seq": {
+      "maximum": 4294967295,
+      "minimum": 0,
+      "title": "Seq",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "device_id",
+    "boot_id",
+    "seq",
+    "event_kind",
+    "quarantine_id",
+    "reason",
+    "payload_sha256"
+  ],
+  "title": "QuarantineReceipt",
+  "type": "object"
+}

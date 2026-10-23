@@ -21,6 +21,16 @@
 - For each authorized code change, identify the relevant PRD requirement, add meaningful verification, and update affected evidence/status documents.
 - Keep notes and experiments non-authoritative until their conclusions are reviewed and promoted through the PRD/decision process.
 
+## Rebuild backend organization
+
+Owner preference confirmed 2026-10-21: keep the rebuild backend organized by feature.
+
+- Keep `main.py` small: application setup and router registration only.
+- Put business features under `rebuild/backend/features/`: accounts, registry, readings, commands, quality, alerts and forecasts as their tasks arrive. Each feature adds `router.py`, `schemas.py`, `service.py` and `repository.py` only as needed; routes handle HTTP, services own business rules/transaction orchestration, repositories own queries.
+- Keep shared infrastructure in `core/`, `database/`, `mqtt/` and `workers/`. Reuse `rebuild/contracts/` for device wire definitions. Keep database table models separate from HTTP request/response schemas.
+- Group tests into `tests/unit/` and `tests/integration/` when organizing the test suite. The current T09 database layout is a valid starting point; split growing model files by domain when navigation warrants it.
+- Create folders with working code, not speculative empty scaffolding. Apply layout changes within an explicitly authorized task; this convention does not authorize unrelated moves, entry-point changes or a broad refactor.
+
 ## Working across chats
 
 - Before a numbered rebuild task, read [rebuild status](docs/status/rebuild.md), its task record, and the task's scope/finish conditions in [the roadmap](docs/roadmap.md). Inspect the actual Git tree; do not rely on the previous chat's memory or a stale status claim.

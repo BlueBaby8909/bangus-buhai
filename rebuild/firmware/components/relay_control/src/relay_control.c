@@ -9,6 +9,7 @@
 
 #include <math.h>
 #include <string.h>
+#include <sys/time.h>
 
 void relay_policy_init(relay_policy_t *policy)
 {
@@ -74,14 +75,24 @@ void relay_policy_auto(relay_policy_t *policy)
     policy->mode = RELAY_MODE_AUTO;
 }
 
-typedef enum { REQUEST_AUTO, REQUEST_MANUAL_OFF, REQUEST_MANUAL_ON } request_t;
+typedef enum { REQUEST_AUTO, REQUEST_MANUAL_OFF, REQUEST_MANUAL_ON } request_kind_t;
+typedef struct { request_kind_t kind; relay_command_request_t command; } request_t;
 static QueueHandle_t s_requests;
+static QueueHandle_t s_completions;
 static SemaphoreHandle_t s_state_mutex;
 static bool s_started;
 static relay_control_state_t s_state;
 static const char *TAG = "RELAY_CONTROL";
 
 static int64_t now_ms(void) { return esp_timer_get_time() / 1000; }
+
+const char *relay_command_rejection(const relay_command_request_t *request, int64_t utc_us, int64_t uptime_ms)
+{
+    if (!request->binding_current || !request->binding_current(request->binding_id)) { return "binding_changed"; }
+    if (utc_us <= 0 || utc_us < request->issued_us || utc_us >= request->expires_us ||
+        uptime_ms >= request->deadline_ms) { return "command_expired"; }
+    return NULL;
+}
 
 static void control_task(void *argument)
 {
@@ -98,21 +109,38 @@ static void control_task(void *argument)
             temperature = &reading.temperature;
         }
         relay_policy_step(&policy, temperature, now_ms());
+        relay_policy_t previous_policy = policy;
 
         esp_err_t request_error = ESP_OK;
         bool processed_request = false;
         request_t request;
-        /* Bound work even when producers continually refill the queue. */
-        for (unsigned i = 0; i < 8 &&
-             xQueueReceive(s_requests, &request, 0) == pdTRUE; ++i) {
+        const char *command_result = "applied", *command_reason = "applied";
+        /* One output/application per request. Reserve completion space first. */
+        if (uxQueueSpacesAvailable(s_completions) > 0 &&
+             xQueueReceive(s_requests, &request, 0) == pdTRUE) {
             processed_request = true;
-            if (request == REQUEST_AUTO) {
+            struct timeval utc;
+            bool expired = request.command.token && (gettimeofday(&utc, NULL) != 0 ||
+                (int64_t)utc.tv_sec * 1000000 + utc.tv_usec < request.command.issued_us ||
+                (int64_t)utc.tv_sec * 1000000 + utc.tv_usec >= request.command.expires_us ||
+                now_ms() >= request.command.deadline_ms);
+            if (request.command.token && (!request.command.binding_current ||
+                    !request.command.binding_current(request.command.binding_id))) {
+                request_error = ESP_ERR_INVALID_STATE;
+                command_result = "rejected"; command_reason = "binding_changed";
+            } else if (expired) {
+                request_error = ESP_ERR_INVALID_STATE;
+                command_result = "rejected"; command_reason = "command_expired";
+            } else if (request.kind == REQUEST_AUTO) {
                 relay_policy_auto(&policy);
                 relay_policy_step(&policy, temperature, now_ms());
                 request_error = ESP_OK;
             } else {
                 request_error = relay_policy_manual(&policy,
-                    request == REQUEST_MANUAL_ON, temperature, now_ms());
+                    request.kind == REQUEST_MANUAL_ON, temperature, now_ms());
+                if (request_error != ESP_OK) {
+                    command_result = "rejected"; command_reason = "temperature_unsafe";
+                }
             }
         }
 
@@ -121,6 +149,15 @@ static void control_task(void *argument)
         if (ret == ESP_OK) {
             /* Recheck age immediately before issuing an output command. */
             relay_policy_step(&policy, temperature, now_ms());
+            if (processed_request && request.command.token && !strcmp(command_result, "applied")) {
+                struct timeval utc;
+                int64_t wall_us = gettimeofday(&utc, NULL) == 0 ? (int64_t)utc.tv_sec * 1000000 + utc.tv_usec : 0;
+                const char *rejected = relay_command_rejection(&request.command, wall_us, now_ms());
+                if (rejected) {
+                    policy = previous_policy; relay_policy_step(&policy, temperature, now_ms());
+                    request_error = ESP_ERR_INVALID_STATE; command_result = "rejected"; command_reason = rejected;
+                }
+            }
             driver = relay_driver_get_state();
             if (driver.on != policy.desired_on) {
                 ret = relay_driver_set_state(policy.desired_on);
@@ -144,6 +181,22 @@ static void control_task(void *argument)
             s_state.last_request_error = request_error != ESP_OK ? request_error : ret;
         }
         xSemaphoreGive(s_state_mutex);
+        if (processed_request && request.command.token) {
+            relay_command_completion_t completed = {.token = request.command.token,
+                .state = s_state, .result = command_result, .reason = command_reason};
+            struct timeval completed_at;
+            if (gettimeofday(&completed_at, NULL) == 0) {
+                completed.completed_us = (int64_t)completed_at.tv_sec * 1000000 + completed_at.tv_usec;
+            }
+            completed.completed_uptime_ms = now_ms();
+            if (ret != ESP_OK) {
+                completed.result = "failed"; completed.reason = "output_unavailable";
+            } else if (!strcmp(completed.result, "applied") && !request.command.automatic &&
+                       driver.on != request.command.on) {
+                completed.result = "rejected"; completed.reason = "temperature_unsafe";
+            }
+            xQueueSend(s_completions, &completed, 0);
+        }
         xTaskDelayUntil(&wake, pdMS_TO_TICKS(250));
     }
 }
@@ -154,10 +207,12 @@ esp_err_t relay_control_init(void)
         return ESP_OK;
     }
     s_requests = xQueueCreate(8, sizeof(request_t));
+    s_completions = xQueueCreate(8, sizeof(relay_command_completion_t));
     s_state_mutex = xSemaphoreCreateMutex();
-    if (s_requests == NULL || s_state_mutex == NULL) {
+    if (s_requests == NULL || s_state_mutex == NULL || s_completions == NULL) {
         if (s_requests != NULL) { vQueueDelete(s_requests); s_requests = NULL; }
         if (s_state_mutex != NULL) { vSemaphoreDelete(s_state_mutex); s_state_mutex = NULL; }
+        if (s_completions != NULL) { vQueueDelete(s_completions); s_completions = NULL; }
         return ESP_ERR_NO_MEM;
     }
     s_state = (relay_control_state_t) {
@@ -166,6 +221,7 @@ esp_err_t relay_control_init(void)
     };
     if (xTaskCreate(control_task, "relay_control", 4096, NULL, 6, NULL) != pdPASS) {
         vQueueDelete(s_requests);
+        vQueueDelete(s_completions); s_completions = NULL;
         vSemaphoreDelete(s_state_mutex);
         s_requests = NULL;
         s_state_mutex = NULL;
@@ -175,18 +231,19 @@ esp_err_t relay_control_init(void)
     return ESP_OK;
 }
 
-static esp_err_t enqueue_request(request_t request)
+static esp_err_t enqueue_request(request_kind_t kind)
 {
     if (!s_started) {
         return ESP_ERR_INVALID_STATE;
     }
-    if (request == REQUEST_MANUAL_ON) {
+    if (kind == REQUEST_MANUAL_ON) {
         sensor_reading_t reading;
         if (sensor_service_try_get_latest(&reading, 20) != ESP_OK ||
             !relay_temperature_usable(&reading.temperature, now_ms())) {
             return ESP_ERR_INVALID_STATE;
         }
     }
+    request_t request = {.kind = kind};
     return xQueueSend(s_requests, &request, 0) == pdTRUE ? ESP_OK : ESP_ERR_TIMEOUT;
 }
 
@@ -210,4 +267,17 @@ esp_err_t relay_control_get_state(relay_control_state_t *out)
     *out = s_state;
     xSemaphoreGive(s_state_mutex);
     return ESP_OK;
+}
+
+esp_err_t relay_control_request_command(const relay_command_request_t *command)
+{
+    if (!s_started || !command || !command->token) { return ESP_ERR_INVALID_STATE; }
+    request_t request = {.kind = command->automatic ? REQUEST_AUTO :
+        command->on ? REQUEST_MANUAL_ON : REQUEST_MANUAL_OFF, .command = *command};
+    return xQueueSend(s_requests, &request, 0) == pdTRUE ? ESP_OK : ESP_ERR_TIMEOUT;
+}
+
+bool relay_control_take_completion(relay_command_completion_t *out)
+{
+    return s_started && out && xQueueReceive(s_completions, out, 0) == pdTRUE;
 }

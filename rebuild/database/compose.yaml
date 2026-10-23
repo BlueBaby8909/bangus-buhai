@@ -1,0 +1,22 @@
+name: bangusbuhai-t09
+
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: bb_rebuild
+      POSTGRES_PASSWORD: ${BB_POSTGRES_PASSWORD:?Run the rebuild local setup command first}
+      POSTGRES_DB: bangus_buhai_rebuild
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bb_rebuild -d bangus_buhai_rebuild"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  postgres_data:

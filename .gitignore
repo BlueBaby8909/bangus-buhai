@@ -28,3 +28,6 @@ wifi-setup-qr.json
 # Local environment variants
 .env.*
 !.env.example
+
+# Isolated database verification tools and disposable data
+/rebuild/.verification/

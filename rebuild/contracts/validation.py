@@ -182,7 +182,7 @@ def validate_command_result(result: CommandResult, command: RelayCommand) -> Non
     for field in ("device_id", "binding_id", "command_id"):
         if getattr(result, field) != getattr(command, field):
             raise ContractError("correlation_mismatch", f"$.{field}")
-    if result.result == "applied" and result.observed_on != command.desired_on:
+    if result.result == "applied" and command.type == "relay.set" and result.observed_on != command.desired_on:
         raise ContractError("correlation_mismatch", "$.observed_on")
 
 

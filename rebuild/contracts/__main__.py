@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-from .artifacts import check_artifacts, export_schemas
+from .artifacts import check_artifacts, export_schemas, schema_documents
 
 
 def main() -> int:
@@ -12,7 +12,7 @@ def main() -> int:
     arguments = parser.parse_args()
     if arguments.command == "export-schemas":
         export_schemas()
-        print("Exported 5 v1 schemas. No fixture or model files changed.")
+        print(f"Exported {len(schema_documents())} v1 schemas. No fixture or model files changed.")
         return 0
     try:
         count, failures = check_artifacts()
@@ -23,7 +23,7 @@ def main() -> int:
         for failure in failures:
             print(failure, file=sys.stderr)
         return 1
-    print(f"PASS: {count} fixture cases and 5 schema snapshots. No contract artifacts written.")
+    print(f"PASS: {count} fixture cases and {len(schema_documents())} schema snapshots. No contract artifacts written.")
     return 0
 
 

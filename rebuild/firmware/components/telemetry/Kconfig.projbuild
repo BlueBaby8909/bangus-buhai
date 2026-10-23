@@ -1,0 +1,8 @@
+menu "Bangus Buhai telemetry"
+config BB_TELEMETRY_BINDING_ID
+    string "Test binding UUID (not production enrollment)"
+    default "97fcde45-4112-41d4-a509-17e5bb1c0d91"
+    help
+        Explicit local T08 test binding. Actual tank assignment/enrollment is
+        outside T08. Existing queued events retain their original binding.
+endmenu

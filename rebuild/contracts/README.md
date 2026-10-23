@@ -134,3 +134,22 @@ Each case names `id`, `operation`, `file` and `topic`. A complete optional `cont
 Supported operations are `message`, `retry`, `delivery`, `result` and `ack`. Invalid fixtures intentionally include malformed JSON, duplicate keys, invalid UTF-8 and semantic conflicts; read the raw bytes and do not globally reformat these examples. The `.bin` fixture preserves invalid UTF-8 exactly. Firmware/browser adapters can later consume this catalog and the rules as acceptance inputs; neither adapter is integrated by T02.
 
 Verification evidence, original working-tree state and follow-up are recorded in [the T02 handoff](../../docs/status/tasks/T02.md). T03 will automate these commands. Device execution, relay safety enforcement, broker trust, buffering, persistence and release readiness require their own later evidence.
+
+## T13A quarantine custody receipt
+
+The sixth schema, `quarantine_receipt.v1.schema.json`, adds the independent
+`/quarantine-receipts` topic. QuarantineReceipt requires schema_version, device_id,
+boot_id, seq, event_kind=telemetry, quarantine_id, reason and a lowercase 64-digit
+payload_sha256. All existing bounds, strict types and topic identity rules apply.
+Hash the exact original payload bytes, including whitespace. This receipt is
+separate from stored/duplicate and is only published after durable quarantine
+custody for a verified owned device; it never means accepted tank history.
+
+## T14 ON/OFF and AUTO
+
+relay.set still requires a Boolean desired_on. relay.auto returns to the existing
+AUTO policy and omits desired_on (explicit null is also accepted as absent).
+An applied AUTO result requires known observed_on, without a Boolean target match.
+Both command types retain strict IDs, issue/expiry and correlation checks. Lifetime,
+retries and current-assignment authorization are owned by T14 runtime services;
+standalone schema checks do not grant command authority or establish actuation.

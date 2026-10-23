@@ -171,13 +171,16 @@ class Status(Envelope):
 class RelayCommand(BoundEnvelope):
     kind = "command"
     command_id: Uuid
-    type: Literal["relay.set"]
-    desired_on: bool
+    type: Literal["relay.set", "relay.auto"]
+    desired_on: bool | None = None
     issued_at: UtcTimestamp
     expires_at: UtcTimestamp
 
     @model_validator(mode="after")
     def ordered_times(self) -> Self:
+        if (self.type == "relay.set" and self.desired_on is None) or (
+            self.type == "relay.auto" and self.desired_on is not None):
+            raise ValueError("relay.set requires a Boolean; relay.auto has no desired_on")
         if utc_datetime(self.expires_at) <= utc_datetime(self.issued_at):
             raise ValueError("Expiry must follow issue time")
         return self
@@ -207,7 +210,18 @@ class Acknowledgement(Envelope):
     result: Literal["stored", "duplicate"]
 
 
-Message = Telemetry | Status | RelayCommand | CommandResult | Acknowledgement
+class QuarantineReceipt(Envelope):
+    """Durable quarantine custody, never an acknowledgement of tank history."""
+    kind = "quarantine_receipt"
+    boot_id: Uuid
+    seq: Uint32
+    event_kind: Literal["telemetry"]
+    quarantine_id: Uuid
+    reason: Reason
+    payload_sha256: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$", min_length=64, max_length=64)]
+
+
+Message = Telemetry | Status | RelayCommand | CommandResult | Acknowledgement | QuarantineReceipt
 Event = Telemetry | CommandResult
 MODELS = {
     "telemetry": Telemetry,
@@ -215,4 +229,5 @@ MODELS = {
     "cmd": RelayCommand,
     "command-results": CommandResult,
     "acks": Acknowledgement,
+    "quarantine-receipts": QuarantineReceipt,
 }

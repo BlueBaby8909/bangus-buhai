@@ -16,6 +16,13 @@ Updated: 2026-10-16 (rebuild workspace). The source audit remains dated 2026-10-
 10. [First-release decision](decisions/0003-first-production-software-release.md): owner-confirmed production-software boundary; requirements remain in the PRD.
 11. [Owner-led development](decisions/0004-owner-led-development.md): every session starts with a plan; the AI guides and implements only when explicitly asked.
 12. [Device contracts v1](decisions/0005-device-contracts-v1.md): accepted offline message rules, boundaries and rationale; implementation and usage live in [rebuild/contracts](../rebuild/contracts/README.md).
+13. [Database ownership and bindings](decisions/0006-database-ownership-and-bindings.md): owner-confirmed hatchery tenancy, multiple devices per tank and the scoped T09 database foundation; [setup guide](../rebuild/database/README.md).
+14. [Operator authentication](decisions/0007-operator-authentication.md): owner-provisioned accounts, one operator role, Supabase authentication and durable backend browser sessions; [backend guide](../rebuild/backend/README.md).
+15. [Self-service device claiming](decisions/0008-self-service-device-claiming.md): trusted device preparation, operator claiming, acknowledged configuration and retained registry history; [registry API/protocol](../rebuild/backend/features/registry/README.md).
+16. [Reading history and manual measurements](decisions/0009-reading-history-and-manual-measurements.md): immutable captures, partial measured manual entries, retained revisions and snapshot pagination; [readings API](../rebuild/backend/features/readings/README.md).
+17. [MQTT ingestion and quarantine](decisions/0010-mqtt-ingestion-and-quarantine.md): backend-first admission, commit-before-ACK, retained configuration evidence and bounded quarantine; [worker guide](../rebuild/backend/mqtt/README.md). Real ESP32/HiveMQ acceptance remains a separate gate.
+
+18. [Real-device onboarding and quarantine custody](decisions/0011-real-device-onboarding-and-quarantine-custody.md): T13A device implementation, separate local HTTPS and exact custody receipts; [handoff](status/tasks/T13A.md).
 
 The architecture and implementation assessment describe the existing code, not an accepted replacement design. The [rebuild workflow](../workflows/rebuild/CONTEXT.md) selects scoped inputs and produces provisional stage outputs; those outputs do not override this authority order.
 
@@ -55,3 +62,7 @@ The structure is the proposed cross-tool working convention adopted for this mig
 - Do not copy credentials, local environment contents, device secrets, or database exports into this knowledge base.
 
 New AI tools should start with the repository [AGENTS.md](../AGENTS.md). [CLAUDE.md](../CLAUDE.md) is a pointer to the same material. Neither contains a separate specification.
+
+T14 relay lifecycle rationale: [decision 0012](decisions/0012-relay-command-lifecycle.md),
+[command API/runbook](../rebuild/backend/features/commands/README.md),
+[verification/handoff](status/tasks/T14.md).

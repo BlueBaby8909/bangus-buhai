@@ -3,7 +3,11 @@
 #include "relay_control.h"
 #include "lcd_display.h"
 #include "wifi_manager.h"
+#include "mqtt_manager.h"
 #include "esp_timer.h"
+#include "esp_random.h"
+#include "bootloader_random.h"
+#include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
@@ -79,6 +83,17 @@ static void display_task(void *argument)
 void app_main(void)
 {
     ESP_LOGI(TAG, "Bangus Buhai firmware starting");
+    /* Temporary entropy source must be off before ADC/radio drivers start. */
+    uint8_t random[16];
+    char boot_id[37];
+    bootloader_random_enable();
+    esp_fill_random(random, sizeof(random));
+    bootloader_random_disable();
+    random[6] = (random[6] & 15) | 0x40;
+    random[8] = (random[8] & 63) | 0x80;
+    snprintf(boot_id, sizeof(boot_id), "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+             random[0], random[1], random[2], random[3], random[4], random[5], random[6], random[7],
+             random[8], random[9], random[10], random[11], random[12], random[13], random[14], random[15]);
     esp_err_t ret = sensor_service_init();
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Sensor service initialization failed: %s", esp_err_to_name(ret));
@@ -96,9 +111,15 @@ void app_main(void)
         ESP_LOGE(TAG, "Display startup failed: %s", esp_err_to_name(ret));
     }
     ret = wifi_manager_init();
+    bool wifi_initialized = ret == ESP_OK;
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Wi-Fi initialization failed: %s", esp_err_to_name(ret));
-    } else {
+    }
+    ret = mqtt_manager_start(boot_id, wifi_initialized);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "MQTT/telemetry startup failed: %s", esp_err_to_name(ret));
+    }
+    if (wifi_initialized) {
         ret = wifi_manager_start();
         if (ret != ESP_OK) {
             ESP_LOGE(TAG, "Wi-Fi startup failed: %s", esp_err_to_name(ret));

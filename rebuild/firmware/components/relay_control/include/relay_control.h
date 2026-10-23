@@ -41,3 +41,22 @@ esp_err_t relay_control_init(void);
 esp_err_t relay_control_request_manual(bool on);
 esp_err_t relay_control_request_auto(void);
 esp_err_t relay_control_get_state(relay_control_state_t *out);
+
+typedef struct {
+    uint32_t token;
+    bool automatic, on;
+    int64_t issued_us, expires_us, deadline_ms;
+    char binding_id[37];
+    bool (*binding_current)(const char *binding);
+} relay_command_request_t;
+typedef struct {
+    uint32_t token;
+    relay_control_state_t state;
+    const char *result, *reason;
+    int64_t completed_us, completed_uptime_ms;
+} relay_command_completion_t;
+/* Correlated requests are applied individually by the sole control task. */
+esp_err_t relay_control_request_command(const relay_command_request_t *request);
+bool relay_control_take_completion(relay_command_completion_t *out);
+const char *relay_command_rejection(const relay_command_request_t *request,
+                                    int64_t utc_us, int64_t uptime_ms);

@@ -178,4 +178,147 @@ Owner checks after building: first provisioning and reboot; wrong-password
 replacement; successful replacement; phone cancellation and power loss during a
 trial; five-minute expiry/reopening; confirmed forgetting; saved-network outage
 and restoration; continued local operation with LCD/relay connected. Re-run the
-existing eight regressions. No MQTT integration or completed T07 claim is implied.
+existing eight regressions. These Wi-Fi checks alone do not complete T07.
+
+The `mqtt_manager` component prepares SNTP and certificate-authenticated
+HiveMQ connections. After the station acquires an IP, it starts SNTP using
+`time.cloudflare.com` and logs `UTC synchronized: ...` when the clock is set.
+The SDK's time event wakes one recovery worker, which starts the MQTT client
+when network/time are ready. SDK callbacks signal the worker; they do not wait
+for the TLS handshake or destroy the client. SNTP is unauthenticated.
+MQTT uses port 8883, the ESP-IDF CA bundle, hostname verification and certificate
+date checks. The client ID is derived from the station MAC.
+
+Before building, put this device's `device-cert.pem` and `device-key.pem` in
+`%USERPROFILE%/BangusBuhai-Secrets/t07`, or set the CMake cache path
+`BB_MQTT_CERT_DIR` to another external credential directory. CMake embeds these
+files as NUL-terminated text without copying PEMs into source control. The
+generated assembly and firmware contain the private key; keep build artifacts
+private. Each device needs its own credentials/build; do not clone this image
+onto other devices as an enrollment mechanism. Physical extraction protection
+is not implemented. Missing files stop configuration; malformed/rejected
+credentials produce connection errors without erasing Wi-Fi settings.
+
+Each attempt configures a retained QoS 1 offline Last Will and, after connecting,
+queues retained QoS 1 online status on
+`bangusbuhai-rebuild/devices/<device_id>/status`. Both use the accepted status
+contract with one random UUID per boot and a fresh UUID per connection attempt;
+no claimed disconnect timestamp is included. A PUBACK is logged when received.
+It is transport acknowledgement, not proof of a viewer update or database write.
+
+One application worker controls MQTT retries; SDK automatic reconnection stays
+disabled. Retry bases double from one second to five minutes with +/-25% jitter
+clipped at five minutes. Backoff resets after the online PUBACK. Attempts wait
+for live station IP and previously synchronized time; a connection that does not
+establish within 30 seconds is discarded. Failed online enqueue is also retried.
+Authentication errors retain Wi-Fi/device credentials and never trigger a reboot
+or setup window. A new client per attempt discards old queued status, preventing
+an earlier connection's unacknowledged status from replaying after reconnect.
+
+The SDK detects established transport/keepalive loss (30-second keepalive).
+The worker does not cleanly stop a connected client merely because Wi-Fi drops:
+a clean MQTT DISCONNECT suppresses the broker's Will. Last Will publication is
+not immediate and requires the broker to detect the loss. Retained status is an
+availability hint; later consumers must handle superseded connection IDs.
+
+Owner verification: build/flash, check `Online status PUBACK received`, then lose
+and restore Wi-Fi/internet/broker connectivity and check the fresh connection ID
+and renewed PUBACK while local sensing/LCD/relay continue. Use an authorized
+broker-side observer to verify retained online/offline Will messages, including
+abrupt power loss. Device logs alone cannot prove the broker published its Will.
+No observer enrollment/permission change is made by firmware. T07 positive
+connection/recovery and retained online/Will/restart checks have owner evidence;
+its remaining verification limits are recorded in the T07 task. T08 adds only
+the application-acknowledgement subscription described below, never commands.
+
+## T08 durable telemetry
+
+**Temporary live-UI trial (owner request,2026-10-22):** the current source sets
+`TELEMETRY_INTERVAL_US` to five seconds. The normal product target remains300seconds;
+this trial does not revise the PRD. Queue capacity remains16 (about80seconds at
+the trial cadence),ACK/retry behavior and local sensing/relay safety are unchanged.
+Diagnostics remain OFF. See T18's live-trial checkpoint for actual flash/evidence.
+Restore the header constant to300seconds and rebuild/app-flash to end the trial.
+
+One startup capture and then one every five minutes run in the existing MQTT
+worker, independently of network availability. The two-second sensing task,
+relay owner and LCD task keep their schedules. Status and new captures share a
+boot UUID generated before ADC/radio startup. Captures keep their original
+boot/sequence, timestamp, ages, values, binding and diagnostics through retries
+and reboot. Unsynchronized captures retain null UTC; they are never retimestamped.
+
+The separate `telemetry` NVS partition occupies 256 KiB at `0x7c0000` on this
+8 MiB board. Existing NVS/PHY/factory offsets and sizes are unchanged. Its queue
+contains at most 16 immutable event blobs; a seventeenth physical slot stages a
+replacement before the versioned/CRC-checked manifest is committed. Overflow
+keeps the newest 16, logs the loss and increments the saturating current-boot
+`queue_dropped` counter. Existing stored diagnostics never change. An interrupted
+capture can lose the event being written, while committed entries remain
+recoverable. An interrupted removal may cause a duplicate resend. Corrupt or
+incompatible storage pauses telemetry with an error; no automatic partition or
+Wi-Fi erase is performed. There is no filesystem or added background task.
+
+Only the queue head is published, QoS 1 and non-retained, after `/acks` subscription
+acceptance. Broker PUBACK releases the transport copy but does not delete the
+durable event. Without a matching application `stored`/`duplicate` acknowledgement,
+the same event is retried 30 seconds after transport completion. Disconnects
+discard SDK transport copies, not stored readings. The outbox and callback inboxes
+are bounded; fragmented/retained/oversized/malformed/mismatched acknowledgements
+cannot silently remove a reading. SDK callbacks assemble/copy only; the worker
+parses and commits. The head payload is cached until a queue mutation.
+
+`CONFIG_BB_TELEMETRY_BINDING_ID` defaults to the explicit T02 fixture UUID
+`97fcde45-4112-41d4-a509-17e5bb1c0d91`. This is a T08 test binding, not tank
+enrollment. Firmware version comes from the ESP-IDF application description.
+Default/unverified pH and turbidity remain unchanged. This is no calibration or
+physical equipment-operation claim.
+
+T13 supplies real database commit acknowledgements. Until then, live readings
+remain pending even with a healthy MQTT connection, and the finite queue will
+eventually overflow. No fake storage-success ACK, temporary receiver, broker
+permission changes or command execution is added. Controlled local tests cover
+the application-ACK boundary.
+
+### First installation and verification
+
+The first T08 installation needs the new partition table, so the owner runs this
+from the normal firmware directory (do not use only `app-flash` on this first run):
+
+```powershell
+idf.py -p COM11 build flash monitor
+```
+
+This writes the bootloader/table/application, without `erase-flash` or a generated
+NVS image. The new partition must initialize successfully before a durable-storage
+claim. Expect `Restored ... pending readings`, `Captured boot=... seq=...`, the
+online PUBACK, `Application acknowledgement subscription ready`, and telemetry
+PUBACK with readings still pending. Restarting should restore the old boot/sequence
+and payload, while new captures use the new boot ID. A storage error leaves local
+operation and status networking active and requires diagnosis, not automatic erase.
+
+The [regression app](tests/README.md) adds ten focused T08 cases to the original
+eight. They use fake NVS and controlled ACKs; they never alter the real telemetry
+partition. Device builds/runs and the real power-cycle check remain owner-run.
+NVS uses SDK wear levelling: the five-minute cadence is 288 captures/day, with
+record and manifest writes per capture, plus manifest/cleanup writes on application
+ACKs and overflow. Transport retries do not rewrite captured events. This is a
+write-rate description, not a measured flash-lifetime or power-failure qualification.
+
+## T13A runtime onboarding (hardware verification pending)
+
+Normal firmware now uses persisted, device-proved backend configuration instead
+of the T08 fixture binding. Existing queued events are preserved. HTTPS setup,
+configuration confirmation and exact quarantine custody receipts are implemented;
+normal and 26-case test builds pass, but owner hardware checkpoints still apply.
+Use the [T13A setup guide](components/device_setup/README.md). No partition/wiring
+change or BOOT-button feature; old T07 checks remain owner-declined, untested.
+
+## T14 relay command integration
+
+command_manager owns the bounded durable command ledger/results inside the MQTT
+worker. relay_control remains the sole output writer and returns correlated
+per-request completion with execution-time expiry, binding and temperature checks.
+The old telemetry queue/partition format is preserved. Tests now contain 34 mocked
+cases; builds do not establish on-board results. Follow the current
+[command runbook](../backend/features/commands/README.md) and [T14 task](../../docs/status/tasks/T14.md).
+Use app-flash only for the owner hardware checkpoints; no partition/NVS erase.

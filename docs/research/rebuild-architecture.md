@@ -4,6 +4,19 @@ Date: 2026-10-16. Status: **proposed; not implemented or accepted**. PRD: R01-R2
 
 ## Scope and approach
 
+T11 update (2026-10-21): accounts and registry API slices are implemented and
+verified within their task limits. [Decision 0008](../decisions/0008-self-service-device-claiming.md)
+records trusted preparation, self-service claiming and separately acknowledged
+configuration. [T11](../status/tasks/T11.md) owns the 76-test/local migration
+evidence; actual firmware/client claiming is still a separate integration step.
+The broader process/MQTT/worker architecture below remains proposed.
+
+T09 update (2026-10-21): the owner accepted hatchery ownership with scoped account
+roles, several devices per tank and one active binding per device. The scoped
+[database decision](../decisions/0006-database-ownership-and-bindings.md) and
+[T09 record](../status/tasks/T09.md) supersede the pending ownership interpretation
+below. Other proposed process/API/transport boundaries remain provisional.
+
 Keep the owner-confirmed ESP-IDF/current-hardware scope, unloaded relay, one hatchery/larvae deployment and production-software goal from [decision 0003](../decisions/0003-first-production-software-release.md). Farm size/connectivity remain unknown, not guessed architecture inputs. Retain FastAPI, React/Vite and PyTorch from the baseline, and PostgreSQL from R18; exact dependency versions and compatibility need verification before implementation.
 
 Propose a modular backend with one codebase and three process roles using one application image: `api`, `ingest`, and `worker`. The API serves operators; ingestion handles MQTT; workers handle durable jobs including inference and notifications. This isolates blocking inference from ingestion and HTTP work without requiring a separate microservice codebase or Redis initially. Qualification must test the deployed process/connection configuration, not promise unlimited scale or high availability.
@@ -49,7 +62,7 @@ The source target is ESP32-S3; the recorded IDF baseline is 6.0.2. Actual wiring
 
 | Module | Responsibility | Key rule |
 |---|---|---|
-| Identity/access | Account lifecycle, OAuth2/JWT integration, admin/operator/viewer permissions and ownership scope | Every REST, live-stream, export and command path checks authenticated access. Authentication provider/library and browser session details remain design decisions before that slice. |
+| Identity/access | Owner-provisioned Supabase email/password identities, one operator role, backend browser sessions and hatchery membership | Accepted in decision 0007; T10 supplies reusable access dependencies, with local tests and owner-run live-provider smoke PASS. Every future REST, live-stream, export and command path must check authenticated hatchery access. T10 records evidence and deployment limits. |
 | Tank/device registry | Tank CRUD, verified device enrollment, ownership and versioned tank bindings | No creation/claiming/reassignment solely from device-supplied tank IDs. Preserve association history. |
 | Ingestion/readings | Parse the versioned contract, validate, deduplicate, persist and expose ordered history/manual records | A transaction commits reading plus downstream event/job intent before sending an application acknowledgement. |
 | Commands | Validate actor/target, persist intent, publish with expiry, track device results | HTTP acceptance, broker publication, device application and observed GPIO state are distinct. |
@@ -57,7 +70,7 @@ The source target is ESP32-S3; the recorded IDF baseline is 6.0.2. Actual wiring
 | Forecasting | Eligible chronological windows, model/scaler/version provenance, target timestamps and evaluation | Disabled/unavailable is explicit until timing/artifact validation supports the claimed horizons. Default pH remains labeled and cannot establish measured-pH accuracy. |
 | Operations/jobs | Migrations, leases/retries, bounded logs/metrics, readiness, recovery and notification adapter | Failures are observable and retryable without pretending external effects are exactly once. |
 
-Proposed data groups: users and role bindings; tanks; devices and enrollment/binding history; immutable ingestion records plus revisions for manual corrections; command intents/results; forecasts; policy versions and alerts; audit records; transactional outbox/jobs. Resource ownership stays explicit. R16's exclusive-ownership wording must be reconciled with group access: propose one owning farm/tenant per resource, with individual accounts and scoped role grants. Do not implement that interpretation as an accepted PRD change without recording it.
+Proposed later data groups include reading corrections, command intents/results, forecasts, policy versions/alerts, audit records and transactional outbox/jobs. T09 already supplies hatchery ownership, tanks/devices, binding history and immutable events (decision 0006). T10 adds provider identity mapping, operator membership, persistent sessions and shared login throttling (decision 0007). R16 now records the accepted hatchery ownership and equal operator access; the former three-role proposal is superseded. Later data groups remain proposals until their own tasks.
 
 Use foreign keys, uniqueness and migrations rather than startup `create_all` as a production upgrade strategy. Request, ingest transaction and job each own their database session; do not pass a shared mutable session between tasks/threads. [SQLAlchemy documents these session concurrency limits](https://docs.sqlalchemy.org/en/20/orm/session_basics.html#is-the-session-thread-safe-is-asyncsession-safe-to-share-in-concurrent-tasks).
 

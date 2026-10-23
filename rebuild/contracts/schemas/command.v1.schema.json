@@ -18,8 +18,16 @@
       "type": "string"
     },
     "desired_on": {
-      "title": "Desired On",
-      "type": "boolean"
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Desired On"
     },
     "device_id": {
       "maxLength": 15,
@@ -47,7 +55,10 @@
       "type": "integer"
     },
     "type": {
-      "const": "relay.set",
+      "enum": [
+        "relay.set",
+        "relay.auto"
+      ],
       "title": "Type",
       "type": "string"
     }
@@ -58,7 +69,6 @@
     "binding_id",
     "command_id",
     "type",
-    "desired_on",
     "issued_at",
     "expires_at"
   ],

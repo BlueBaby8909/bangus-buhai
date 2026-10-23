@@ -1,6 +1,6 @@
 # Rebuild workspace
 
-T01 provides a separate FastAPI backend, React/Vite frontend and firmware starting-point area. The backend currently serves only a health response; the frontend shows a static page. They do not exchange application data yet.
+T01 provides a separate FastAPI backend, React/Vite frontend and firmware starting-point area. T09 adds the [PostgreSQL foundation](database/README.md); T10 adds login/current-user/logout APIs and persistent sessions. T11 adds [protected registry and secure device claiming](backend/features/registry/README.md), verified with simulated devices. See the [backend guide](backend/README.md) for organization/setup. T16–T18 now provide the protected operator frontend and device/history/manual/CSV/relay flows. The owner requested the original prototype as the visual baseline; see frontend/README.md and the T17 record.
 
 The existing prototype remains in the repository's top-level `backend/`, `frontend/` and `firmware/` directories. All commands below target `rebuild/`. T02 adds the [offline shared device contracts](contracts/README.md), independently of the application shells.
 
@@ -70,7 +70,7 @@ Open the [backend health endpoint](http://127.0.0.1:8001/health) and [frontend](
 {"status":"ok","service":"bangus-buhai-rebuild"}
 ```
 
-The frontend should show **Bangus Buhai Rebuild** and **The frontend workspace is running.** Stop a server with Ctrl+C in its terminal. No dependency installation or clean-install check is needed for normal daily startup.
+The frontend shows operator sign-in, then the original-baseline hatchery dashboard. Stop a server with Ctrl+C in its terminal. No dependency installation or clean-install check is needed for normal daily startup.
 
 ## Automated checks
 
@@ -82,7 +82,10 @@ check.cmd
 ```
 
 This runs Python dependency checks, contract tests, fixture/schema checks,
-a backend import/health-function check, frontend lint and frontend build.
+a backend import/health-function check, offline database configuration and
+authentication/JWT tests, frontend lint and frontend build. Real PostgreSQL
+integration tests run separately using the [backend guide](backend/README.md)
+and dedicated database CI workflow.
 
 Exit code 0 means all checks passed. Exit code 1 means a check failed;
 the script names the failed step and stops.
@@ -109,7 +112,7 @@ npm run build
 
 Both should exit successfully. The build writes ignored output to `rebuild/frontend/dist/`. For an optional local preview of that output, run `npm run preview` and open [port 4174](http://127.0.0.1:4174/). Preview settings were source-reviewed; the preview server was not exercised during T01.
 
-The health response checks that the minimal app starts; it does not certify database, MQTT, model or hardware readiness. There is no backend API or device integration suite in this scaffold. T02's offline contract checks run from `rebuild/`:
+The health response checks liveness; it does not certify database, MQTT, model or hardware readiness. T09 PostgreSQL and T10 account/session HTTP integration suites now run separately as documented in the [backend guide](backend/README.md). They do not establish device ingestion or deployment readiness. T02's offline contract checks run from `rebuild/`:
 
 ```cmd
 backend\.venv\Scripts\python.exe -m unittest discover -s contracts\tests -v
@@ -146,11 +149,11 @@ For the frontend, stop its development server, run `npm ci`, then lint/build and
 | Backend packages | [backend/requirements.lock.txt](backend/requirements.lock.txt) | Install the recorded exact versions |
 | Frontend packages | [frontend/package-lock.json](frontend/package-lock.json) | Install with `npm ci` |
 
-These files are the supported configuration examples for this shell. The backend does not load `.env` files. Vite supports frontend `.env` files, but the static page consumes no custom environment variables. No `.env` file, database URL or broker credentials are required for T01.
+These files are the supported configuration examples for this shell. The health endpoint requires no environment file or database. Database operations read explicit `BB_DATABASE_URL`/`BB_TEST_DATABASE_URL` environment values or only the anchored `rebuild/database/.env`; local setup preserves that file. T10 authentication reads its separate ignored `rebuild/backend/.env` or process environment; see [backend setup](backend/README.md). Vite supports frontend `.env` files, but the static page consumes no custom environment variables. No broker credentials are required for these backend checks.
 
 The frontend fails if its configured port is occupied instead of silently moving to another port. The backend also reports a bind failure on an occupied port. Stop the relevant rebuild server before restarting; leave prototype processes alone. The temporary backend check uses an explicit alternate port.
 
-No current rebuild code connects to a database or MQTT broker, loads model artifacts, reads prototype credentials, migrates data or flashes a device. Keep the prototype's environments, database, certificates, model artifacts and local firmware configuration preserved. Git ignores the Python environments and generated frontend dependencies/build output; keep both dependency lockfiles with the rebuild source.
+The backend health import starts no database, MQTT connection or model loading. T09's explicit commands connect only to the configured PostgreSQL host and migrate its selected database; no prototype database/configuration is read or imported. Firmware connectivity and device checks have separate task records. Keep the prototype's environments, database, certificates, model artifacts and local firmware configuration preserved. Git ignores Python environments, local database secrets, verification tools/data and generated frontend output; keep dependency lockfiles with the rebuild source.
 
 ## Firmware and verification limits
 

@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "device_id": "BB-AABBCC112233",
+  "binding_id": "97fcde45-4112-41d4-a509-17e5bb1c0d91",
+  "command_id": "38e2d9ab-a634-4be1-9b4f-b1ef96c5bb3b",
+  "type": "relay.auto",
+  "issued_at": "2026-10-16T03:00:00Z",
+  "expires_at": "2026-10-16T03:01:00Z"
+}

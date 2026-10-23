@@ -328,7 +328,7 @@ class ContextAndCorrelationTests(ContractTest):
 class ArtifactTests(ContractTest):
     def test_exported_schemas_match_models_and_are_closed_objects(self):
         generated = schema_documents()
-        self.assertEqual(len(generated), 5)
+        self.assertEqual(len(generated), 6)
         for name, text in generated.items():
             with self.subTest(name=name):
                 self.assertEqual((SCHEMAS / name).read_text(encoding="utf-8"), text)

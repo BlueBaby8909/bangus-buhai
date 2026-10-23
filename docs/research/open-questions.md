@@ -22,6 +22,14 @@ Owner-confirmed: no connected load; the relay is for visual demonstration. Befor
 
 ## Q05 Production security and hosting
 
+Authentication choice resolved, owner-confirmed 2026-10-21: use Supabase
+email/password, owner-provisioned identities and one operator role with hatchery
+membership. The [accepted decision](../decisions/0007-operator-authentication.md)
+records opaque backend sessions, eight-hour/30-minute limits and immediate local
+revocation. [T10](../status/tasks/T10.md) owns actual verification; local tests
+and the owner-run live credential smoke now PASS. This does not resolve deployment or broker questions
+below; read current T07 evidence before relying on the dated broker baseline.
+
 Partially resolved, owner-confirmed 2026-10-16: the first release serves real operators at one hatchery, and the [PRD](../PRD.md#first-production-software-release) requires accounts, permissions, and ownership enforcement for that release. Historical disagreement about prototype authentication does not waive that release requirement.
 
 Still unresolved: confirm HiveMQ plan support and configuration for per-device mTLS and topic permissions. Broker account capabilities cannot be inferred from a successful username/password connection.
@@ -35,5 +43,12 @@ Choose the backend/static frontend hosting, TLS termination, pooling, backups, m
 The documented board/target, GPIO defaults, LCD address, 8 MB configuration, and local IDF lock do not prove actual wiring, electrical voltage limits, flash size, sensor calibration, or clean-build compatibility. Preserve current configuration and known binaries until verified. Validate the turbidity 2.28 voltage multiplier with calibration records. Check BLE provisioning, disconnect/reconnect behavior, watchdogs, stale readings, and future OTA/rollback on hardware. No hardware behavior was verified during migration.
 
 ## Q07 Capacity and data semantics
+
+T09 update (2026-10-21): [decision 0006](../decisions/0006-database-ownership-and-bindings.md)
+settles hatchery ownership, several devices per tank/one active binding per device,
+retained assignment history and versioned PostgreSQL migrations for the rebuild.
+Protected lifecycle operations, closed-interval/capture admission and manual
+correction semantics remain T11-T13. This does not resolve the legacy capacity
+formula or migrate/audit existing SQLite data described below.
 
 The tank capacity code multiplies volume in mL by 600; its comment describes a reciprocal relationship. Define the quantity, units, formula, and validation source before correcting it or exposing it as a biological recommendation. Define device/tank reassignment, deletion behavior, SQLite constraint enforcement, schema migration, and manual versus device measurement provenance. No live database schema/data audit was performed.
